@@ -1,0 +1,11 @@
+[submodule "eventmachine"]
+	path = eventmachine
+	url = https://github.com/IronFoundry/eventmachine.git
+	branch = ironfoundry
+[submodule "IFwarden"]
+	path = IFwarden
+	url = https://github.com/IronFoundry/IFwarden.git
+[submodule "dea_ng"]
+	path = dea_ng
+	url = https://github.com/IronFoundry/dea_ng.git
+	branch = dea_156
