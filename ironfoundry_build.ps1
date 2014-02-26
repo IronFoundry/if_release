@@ -13,8 +13,9 @@ $StagingDir = "$StagingRootDir\$ReleaseName"
 $ToolsDir = "$PWD\tools"
 $ZipCmd = "$ToolsDir\7zip\7za.exe"
 $LogFile = "$PWD\$ReleaseName_build.log"
+$if_warden_version='0.0.0'
 
-.\IFwarden\build.bat 
+.\if_warden\build.bat 
 
 Set-Location $IFSourceDirectory\dea_ng
 git submodule update --init
@@ -45,18 +46,20 @@ $dirs = @(
 
 ForEach ($dir in $dirs)
 {
-    New-Item $StagingDir\$dir -itemtype directory    
+    New-Item $StagingDir\$dir -itemtype directory | Out-Null 
 }
 
-Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDir\dea_ng\app -Container | Out-Null
-Copy-Item -Recurse $IFSourceDirectory\eventmachine $StagingDir\eventmachine -Container | Out-Null
-Copy-Item -Recurse $IFSourceDirectory\warden $StagingDir\warden\app -Container | Out-Null
-Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container | Out-Null
+Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDir\dea_ng\app -Container 
+Copy-Item -Recurse $IFSourceDirectory\eventmachine $StagingDir\eventmachine -Container 
+Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binaries $StagingDir\warden\app -Container 
+Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container 
 
-Copy-Item $IFSourceDirectory\ironfoundry_install.ps1 $StagingRootDir -Container | Out-Null
+Copy-Item $IFSourceDirectory\ironfoundry_install.ps1 $StagingRootDir -Container 
 
 
-Set-Location $StagingRootDir
-. $ZipCmd a -tzip -r -y "$ReleaseName".zip $Stagingdir
+Set-Location $StagingRootDir | Out-Null
+
+Write-Host $ZipCmd a -tzip -r -y "$ReleaseName".zip $Stagingdir
+. $ZipCmd a -tzip -r -y "$ReleaseName".zip $Stagingdir | Out-Null
 
 Set-Location $IFSourceDirectory
