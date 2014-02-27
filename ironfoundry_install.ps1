@@ -10,7 +10,10 @@ Param(
     
     [string] $IF_WardenUser = "IFWardenService",
 
-    [string] $DefaultInstallDir = "C:\IronFoundry"
+    [string] $DefaultInstallDir = "C:\IronFoundry",
+
+    [string] $NatsUser = 'nats',
+    [string] $NatsPassword = 'c1oudc0w'
     )
 
 
@@ -70,6 +73,15 @@ function RemoveFirewallRules($ruleName)
      . netsh.exe advfirewall firewall delete rule name="$ruleName"-allow-out
 }
 
+function IsAdmin()
+{
+  $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+  $prp=new-object System.Security.Principal.WindowsPrincipal($wid)
+  $adm=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+  $IsAdmin=$prp.IsInRole($adm)
+  return $IsAdmin
+}
+
 function FindApp($appName)
 {
     # Search path for app
@@ -117,8 +129,15 @@ function VerifyDependencies($context)
     if ($rubyApp -eq $null) {
         Write-Error "Unable to find Ruby"
     }
-
     $context['rubyPath'] = Split-Path $rubyApp -Parent    
+
+    if ((FindApp "go.exe") -eq $null) {
+        Write-Error "Unable to find Go"
+    }
+
+    if ((FindApp "git.exe") -eq $null) {
+        Write-Error "Unable to find git.exe"
+    }    
 }
 
 function GoServiceInstall($context)
@@ -155,13 +174,13 @@ function CopySourceDirectoryAction($context)
 
 function DEAInstallAction($context)
 {
-    Write-Host "Install DEA dependent gems"
+    Write-Host "Install DEA dependent gems (this may take a while)"
 
     if ($context['action'] -eq 'install')
     {
         Write-Host "Update gem packages for dea_ng"
-        $rubyApps = @('dea_ng\app', ''  )
         . gem update --system --quiet
+        . gem install bundle --quiet
 
         Set-Location $context['deaAppPath']
         . bundle install --quiet
@@ -177,8 +196,8 @@ function DEAServiceInstall($context)
 
     if ($context['action'] -eq 'install') {
         $rubywExe = "$($context['rubyPath'])\rubyw.exe"
-    
-        . sc.exe create IFDeaSvc start=delayed-auto binPath="$rubywExe -C $($context['deaApppath'])\bin dea_winsvc.rb $($context['configPath'])" DisplayName= "Iron Foundry DEA"
+          
+        . sc.exe create IFDeaSvc start=delayed-auto binPath="$rubywExe -C $($context['deaApppath'])\bin dea_winsvc.rb $($context['configFile'])" DisplayName= "Iron Foundry DEA"
         . sc.exe failure IFDeaSvc reset=86400 actions="restart/600000/restart/600000/restart/600000"
 
         AddFirewallRules $rubywExe "rubyw-193"
@@ -190,6 +209,9 @@ function RebuildEventMachineAction($context)
     Write-Host "Build and install custom event machine"
     if ($context['action'] -eq 'install') {
         Write-Host "Building and installing custom eventmachine gem"
+        Set-Location "$($context['InstallRootDir'])"
+        git clone https://github.com/IronFoundry/eventmachine.git eventmachine
+
         Set-Location "$($context['InstallRootDir'])\eventmachine"
         . gem uninstall eventmachine --force --version 1.0.3 --quiet
         . gem build eventmachine.gemspec --quiet
@@ -210,7 +232,12 @@ function WardenServiceInstall($context)
     {
         CreateLocalUser $IF_WardenUser $IF_WardenUser_Password
         AddUserToGroup $IF_WardenUser "Administrators"
-        . $wardenService install -username:$env:computer/$IF_WardenUser -password:$IF_WardenUser_Password --autostart
+        
+        . $wardenService install -username:"$env:computername\$IF_WardenUser" -password:"$IF_WardenUser_Password" --autostart
+        if ($? -eq $false)
+        {
+            Write-Error "Unable to install warden service"
+        }
     }
     else {
         RemoveLocaluser $IF_WardenUser
@@ -227,9 +254,9 @@ function UpdateConfigFile($context)
 
     $configFile = $configFile | 
                 %{ $_ -replace "C\:/IronFoundry/", "$installerRootDirRubified/"} |
-                %{ $_ -replace "(router\:)(.+?)($)", "`$1 $CloudController:3456" } |
-                %{ $_ -replace "(nats\:)(.+?)($)", "`$1 //nats:c1oudc0w@$($CloudController):4222/" } |
-                %{ $_ -replace "(domain\:)(.+?)($)", "`$1 `"$CloudDomain`"" } |
+                %{ $_ -replace "(router\:)(.+?)($)", "`$1 $($CloudController):3456" } |
+                %{ $_ -replace "(nats\:)(.+?)($)", "`$1//${NatsUser}:$NatsPassword@$($CloudController):4222" } |
+                %{ $_ -replace "(domain\:)(.+?)($)", "`$1 `"$($CloudDomain)`"" } |
                 %{ $_ -replace "C\:[\\,/]Ruby193[\\,/]bin", "$rubyPathRubified" }
 
     Set-Content $configFilePath $configFile

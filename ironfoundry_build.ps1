@@ -53,7 +53,6 @@ ForEach ($dir in $dirs)
 }
 
 Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDir\dea_ng\app -Container 
-Copy-Item -Recurse $IFSourceDirectory\eventmachine $StagingDir\eventmachine -Container 
 Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binaries $StagingDir\warden\app -Container 
 Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container 
 
