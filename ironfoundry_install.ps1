@@ -151,7 +151,7 @@ function GoServiceInstall($context)
         Write-Host "Installing IF WinRunner Service"
 
         . $runnerExe install $context['configFile']
-        AddFirewallRules $runnerExe, "IF_runner"
+        AddFirewallRules $runnerExe "IF_runner"
     }
     else {
         RemoveFirewallRules "IF_runner"

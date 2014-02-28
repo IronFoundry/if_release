@@ -32,7 +32,7 @@ Set-Location $IFSourceDirectory
 #
 # Stage items for zipping
 #
-New-Item $StagingDir -itemtype directory
+New-Item $StagingDir -itemtype directory | Out-Null
 
 $dirs = @(
     'buildpack_cache', 
@@ -56,12 +56,20 @@ Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDir\dea_ng\app -Container
 Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binaries $StagingDir\warden\app -Container 
 Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container 
 
-Copy-Item $IFSourceDirectory\ironfoundry_install.ps1 $StagingRootDir -Container 
+$additionalFiles = @( 
+    'ironfoundry_install.ps1', 
+    'start-if-services.ps1', 
+    'stop-if-services.ps1')
+
+ForEach($file in $additionalFiles)
+{
+    Copy-Item $file $StagingRootDir -Container     
+}
 
 
 Set-Location $StagingRootDir | Out-Null
 
-Write-Host $ZipCmd a -tzip -r -y "$ReleaseName".zip $Stagingdir
-. $ZipCmd a -tzip -r -y "$ReleaseName".zip $Stagingdir | Out-Null
+Write-Host $ZipCmd a -sfx "$RelaseName".exe -r -y $Stagingdir
+. $ZipCmd a -sfx "$RelaseName".exe -r -y $Stagingdir | Out-Null
 
 Set-Location $IFSourceDirectory
