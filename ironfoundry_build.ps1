@@ -57,6 +57,7 @@ Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binari
 Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container 
 
 $additionalFiles = @( 
+    'dea_mswin-clr.yml',
     'ironfoundry_install.ps1', 
     'start-if-services.ps1', 
     'stop-if-services.ps1')

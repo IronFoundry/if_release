@@ -169,7 +169,7 @@ function CopySourceDirectoryAction($context)
 
     $context['deaAppPath'] = "$($context['InstallRootDir'])\dea_ng\app"
     $context['wardenAppPath'] = resolve-path "$($context['InstallRootDir'])\warden\app"
-    $context['configFile'] = resolve-path "$($context['deaAppPath'])\config\dea_mswin-clr.yml"
+    $context['configFile'] = resolve-path "$($context['deaAppPath'])\config\dea.yml"
 }
 
 function DEAInstallAction($context)
@@ -246,8 +246,9 @@ function WardenServiceInstall($context)
 
 function UpdateConfigFile($context)
 {
+    $sourceConfigFilePath = Join-Path $context['SourceDir'] 'dea_mswin-clr.yml'
     $configFilePath = $context['configFile']
-    $configFile = Get-Content $configFilePath
+    $configFile = Get-Content $sourceConfigFilePath
 
     $installerRootDirRubified = $context['InstallRootDir'] -replace "\\","/"
     $rubyPathRubified = $context['rubyPath'] -replace "\\","/"
