@@ -7,7 +7,7 @@
 # Build Source and Update Submodules
 #
 $ReleaseName='cfmaster'
-$IFSourceDirectory = $PWD
+$IFSourceDirectory = Convert-Path $PWD
 $StagingRootDir = "$PWD\staging"
 $StagingDir = "$StagingRootDir\$ReleaseName"
 $ToolsDir = "$PWD\tools"
@@ -32,6 +32,7 @@ Set-Location $IFSourceDirectory
 #
 # Stage items for zipping
 #
+Remove-Item $StagingRootDir -force -recurse -erroraction silentlycontinue | Out-Null
 New-Item $StagingDir -itemtype directory -Force | Out-Null
 
 $dirs = @(
@@ -70,7 +71,7 @@ ForEach($file in $additionalFiles)
 
 Set-Location $StagingRootDir | Out-Null
 
-Write-Host $ZipCmd a -sfx "$RelaseName".exe -r -y $Stagingdir
-. $ZipCmd a -sfx "$RelaseName".exe -r -y $Stagingdir | Out-Null
+"Creating package"
+. $ZipCmd a -sfx "$ReleaseName".exe -r -y $Stagingdir | Out-Null
 
 Set-Location $IFSourceDirectory
