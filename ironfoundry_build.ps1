@@ -6,7 +6,7 @@
 #
 # Build Source and Update Submodules
 #
-$ReleaseName='if_v156'
+$ReleaseName='cfmaster'
 $IFSourceDirectory = $PWD
 $StagingRootDir = "$PWD\staging"
 $StagingDir = "$StagingRootDir\$ReleaseName"
@@ -32,7 +32,7 @@ Set-Location $IFSourceDirectory
 #
 # Stage items for zipping
 #
-New-Item $StagingDir -itemtype directory | Out-Null
+New-Item $StagingDir -itemtype directory -Force | Out-Null
 
 $dirs = @(
     'buildpack_cache', 
@@ -49,12 +49,12 @@ $dirs = @(
 
 ForEach ($dir in $dirs)
 {
-    New-Item $StagingDir\$dir -itemtype directory | Out-Null 
+    New-Item $StagingDir\$dir -itemtype directory -force | Out-Null 
 }
 
-Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDir\dea_ng\app -Container 
-Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binaries $StagingDir\warden\app -Container 
-Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container 
+Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDir\dea_ng\app -Container -Force
+Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binaries $StagingDir\warden\app -Container -Force
+Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
 
 $additionalFiles = @( 
     'dea_mswin-clr.yml',
@@ -64,7 +64,7 @@ $additionalFiles = @(
 
 ForEach($file in $additionalFiles)
 {
-    Copy-Item $file $StagingRootDir -Container     
+    Copy-Item $file $StagingRootDir -Container -Force
 }
 
 

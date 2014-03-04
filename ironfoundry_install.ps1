@@ -38,7 +38,7 @@ Param(
 
 # General install information
 $installContext = @{}
-$Release = 'if_v156'
+$Release = 'cfmaster'
 
 #
 # Helper routines
@@ -246,7 +246,7 @@ function WardenServiceInstall($context)
 
 function UpdateConfigFile($context)
 {
-    $sourceConfigFilePath = Join-Path $context['SourceDir'] 'dea_mswin-clr.yml'
+    $sourceConfigFilePath = Join-Path $StartDirectory 'dea_mswin-clr.yml'
     $configFilePath = $context['configFile']
     $configFile = Get-Content $sourceConfigFilePath
 
