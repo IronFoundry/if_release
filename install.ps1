@@ -20,6 +20,10 @@ Unblock-File ~/Downloads/DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe
 C:\Ruby193\bin\ruby.exe C:\RubyDevKit\dk.rb init | out-null
 C:\Ruby193\bin\ruby.exe C:\RubyDevKit\dk.rb install | out-null
 
+"Ruby Gem Update"
+C:\Ruby193\bin\gem.bat update --system --quiet
+C:\Ruby193\bin\gem.bat install bundle --quiet
+
 "Installing msysgit for windows..."
 Invoke-WebRequest "https://msysgit.googlecode.com/files/Git-1.9.0-preview20140217.exe" -OutFile ~/Downloads/Git-1.9.0-preview20140217.exe
 Unblock-file ~/Downloads/Git-1.9.0-preview20140217.exe
@@ -29,6 +33,9 @@ $systemPath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\Curre
 if ($systemPath -notmatch '\\Git\\cmd') {
     $systemPath += ";${env:ProgramFiles(x86)}\Git\cmd"
     Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH –Value $systemPath
+
+    # Also set locally since we can't fire a WM_SETTINGSCHANGED message so we don't have to log on/off to immediately use this.
+    $env:Path += ";${env:ProgramFiles(x86)}\Git\cmd"
 }
 
 "Done."
