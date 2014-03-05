@@ -8,8 +8,9 @@
 #
 $ReleaseName='cfmaster'
 $IFSourceDirectory = Convert-Path $PWD
-$StagingRootDir = "$PWD\staging"
+$StagingRootDir = "$IFSourceDirectory\staging"
 $StagingDir = "$StagingRootDir\$ReleaseName"
+$ReleaseDir = "$IFSourceDirectory\release"
 $ToolsDir = "$PWD\tools"
 $ZipCmd = "$ToolsDir\7zip\7za.exe"
 $LogFile = "$PWD\$ReleaseName_build.log"
@@ -29,9 +30,9 @@ $env:GOPATH="$IFSourceDirectory\dea_ng\go"
 go build winrunner
 
 Set-Location $IFSourceDirectory
-#
-# Stage items for zipping
-#
+
+"Staging the release"
+
 Remove-Item $StagingRootDir -force -recurse -erroraction silentlycontinue | Out-Null
 New-Item $StagingDir -itemtype directory -Force | Out-Null
 
@@ -68,10 +69,11 @@ ForEach($file in $additionalFiles)
     Copy-Item $file $StagingRootDir -Container -Force
 }
 
+"Creating the release"
 
-Set-Location $StagingRootDir | Out-Null
-
-"Creating package"
-. $ZipCmd a -sfx "$ReleaseName".exe -r -y $Stagingdir | Out-Null
+Remove-Item $ReleaseDir -recurse -force -erroraction silentlycontinue | Out-Null
+New-Item $ReleaseDir -itemtype directory -force | Out-Null 
+Set-Location $ReleaseDir | Out-Null
+. $ZipCmd a -sfx "$ReleaseDir\$ReleaseName.exe" -r -y $Stagingdir
 
 Set-Location $IFSourceDirectory
