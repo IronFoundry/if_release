@@ -16,13 +16,11 @@ $ZipCmd = "$ToolsDir\7zip\7za.exe"
 $LogFile = "$PWD\$ReleaseName-build.log"
 $if_warden_version='0.0.0'
 
-Write-Host "Building Warden"
-.\if_warden\build.bat 
-
-Write-Host "Updating dea_ng submodules"
-Set-Location $IFSourceDirectory\dea_ng
+Write-Host "Updating submodules"
 git submodule update --init
 
+Write-Host "Building Warden"
+.\if_warden\build.bat 
 
 Write-Host "Building GO WinRunner"
 Set-Location $IFSourceDirectory\dea_ng\go\
