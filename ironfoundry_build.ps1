@@ -73,7 +73,7 @@ ForEach($file in $additionalFiles)
 
 Remove-Item $ReleaseDir -recurse -force -erroraction silentlycontinue | Out-Null
 New-Item $ReleaseDir -itemtype directory -force | Out-Null 
-Set-Location $ReleaseDir | Out-Null
-. $ZipCmd a -sfx "$ReleaseDir\$ReleaseName.exe" -r -y $Stagingdir
+
+. $ZipCmd a -sfx "$ReleaseDir\$ReleaseName.exe" -r -y $StagingRootDir\* | Out-Null
 
 Set-Location $IFSourceDirectory
