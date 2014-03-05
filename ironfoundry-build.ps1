@@ -17,7 +17,7 @@ $LogFile = "$PWD\$ReleaseName-build.log"
 $if_warden_version='0.0.0'
 
 Write-Host "Updating submodules"
-git submodule update --init
+git submodule update --init --recursive
 
 Write-Host "Building Warden"
 .\if_warden\build.bat 
