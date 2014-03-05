@@ -62,7 +62,8 @@ $additionalFiles = @(
     'dea_mswin-clr.yml',
     'ironfoundry_install.ps1', 
     'start-if-services.ps1', 
-    'stop-if-services.ps1')
+    'stop-if-services.ps1',
+	'install_prerequisites.ps1)
 
 ForEach($file in $additionalFiles)
 {
@@ -74,6 +75,6 @@ ForEach($file in $additionalFiles)
 Remove-Item $ReleaseDir -recurse -force -erroraction silentlycontinue | Out-Null
 New-Item $ReleaseDir -itemtype directory -force | Out-Null 
 
-. $ZipCmd a -sfx "$ReleaseDir\$ReleaseName.exe" -r -y $StagingRootDir\* | Out-Null
+. $ZipCmd a -sfx "$ReleaseDir\ironfoundry_$ReleaseName.exe" -r -y $StagingRootDir\* | Out-Null
 
 Set-Location $IFSourceDirectory
