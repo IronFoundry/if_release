@@ -162,7 +162,7 @@ function CopySourceDirectoryAction($context)
 {
     Write-Host "Copy files to target directory"
 
-    Copy-Item -Recurse $context['SourceDir'] $context['InstallRootDir']
+    Copy-Item -Recurse -Force $context['SourceDir'] $context['InstallRootDir']
 
     SetOwner $context['InstallRootDir'] "Administrators"
     SetFullcontrolPermissions $context['InstallRootDir'] "NT Authority\Local Service"
