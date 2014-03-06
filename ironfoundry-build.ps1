@@ -57,11 +57,15 @@ Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binari
 Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
 
 $additionalFiles = @( 
-    'dea_mswin-clr.yml',
+    'default-dea-config.yml',
+	'generate-dea-config.ps1',
+	'generate-dea-config.rb',
     'ironfoundry-install.ps1', 
     'start-if-services.ps1', 
     'stop-if-services.ps1',
-	'install-prerequisites.ps1')
+	'install-prerequisites.ps1',
+	'configure-dea.rb',
+	'README.md')
 
 ForEach($file in $additionalFiles)
 {

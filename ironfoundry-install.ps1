@@ -1,19 +1,13 @@
 Param(
     [Parameter(Mandatory=$True,Position=1)]
-    [string]$CloudController, 
+    [string]$Dea_Yml_File, 
 
     [Parameter(Mandatory=$True,Position=2)]
-    [string]$CloudDomain, 
-
-    [Parameter(Mandatory=$True,Position=3)]
     [string] $IF_WardenUser_Password,
     
     [string] $IF_WardenUser = "IFWardenService",
 
-    [string] $DefaultInstallDir = "C:\IronFoundry",
-
-    [string] $NatsUser = 'nats',
-    [string] $NatsPassword = 'c1oudc0w'
+    [string] $DefaultInstallDir = "C:\IronFoundry"
     )
 
 
@@ -246,21 +240,12 @@ function WardenServiceInstall($context)
 
 function UpdateConfigFile($context)
 {
-    $sourceConfigFilePath = Join-Path $StartDirectory 'dea_mswin-clr.yml'
-    $configFilePath = $context['configFile']
-    $configFile = Get-Content $sourceConfigFilePath
-
-    $installerRootDirRubified = $context['InstallRootDir'] -replace "\\","/"
-    $rubyPathRubified = $context['rubyPath'] -replace "\\","/"
-
-    $configFile = $configFile | 
-                %{ $_ -replace "C\:/IronFoundry/", "$installerRootDirRubified/"} |
-                %{ $_ -replace "(router\:)(.+?)($)", "`$1 $($CloudController):3456" } |
-                %{ $_ -replace "(nats\:)(.+?)($)", "`$1//${NatsUser}:$NatsPassword@$($CloudController):4222" } |
-                %{ $_ -replace "(domain\:)(.+?)($)", "`$1 `"$($CloudDomain)`"" } |
-                %{ $_ -replace "C\:[\\,/]Ruby193[\\,/]bin", "$rubyPathRubified" }
-
-    Set-Content $configFilePath $configFile
+	Set-Location $StartDirectory
+	
+	$deaYmlFile = "$(resolve-path $Dea_Yml_File)" -Replace "\\", "/"
+	$rubyPath = "$($context['rubyPath'])" -Replace "\\", "/"
+	$installRoot = "$($context['InstallRootDir'])" -Replace "\\", "/"
+	& ruby $StartDirectory\configure-dea.rb "$deaYmlFile" "$rubyPath" "$installRoot"
 }
 
 #
@@ -276,10 +261,10 @@ VerifyDependencies $installContext
 CopySourceDirectoryAction $installContext
 DEAInstallAction $installContext
 RebuildEventMachineAction $installContext
+UpdateConfigFile $installContext
 DEAServiceInstall $installContext 
 GoServiceInstall $installContext
 WardenServiceInstall $installContext
-UpdateConfigFile $installContext
 
 Set-Location $StartDirectory
     
