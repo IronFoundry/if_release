@@ -19,6 +19,7 @@ File.open(dea_yml_file, 'r') do |file|
     config['logging'].delete('syslog')
     config['staging']['environment']['BUILDPACK_CACHE'] = (ironfoundry_path + 'buildpack_cache').to_s
     config['staging']['environment']['PATH'] = ruby_path.to_s
+    config['bind_mounts'] =[ 'src_path' => (ironfoundry_path + 'buildpack_cache').to_s ]
     config['stacks'] = ['mswin-clr']
 
     File.open(output_file, 'w') do |file|
