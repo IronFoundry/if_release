@@ -7,6 +7,11 @@ pkgmgr "/iu:IIS-WebServerRole;IIS-HostableWebCore;IIS-ISAPIExtensions;IIS-ISAPIF
 Invoke-Webrequest "http://go.googlecode.com/files/go1.2.windows-amd64.msi" -OutFile ~/Downloads/go1.2.windows-amd64.msi
 Unblock-File ~/Downloads/go1.2.windows-amd64.msi
 ~/Downloads/go1.2.windows-amd64.msi /quiet
+# Can't find a way to trigger the path addition for Go, so doing it manually.  Assuming standard install to system drive.
+if ($env:Path -notmatch '\\Go\\bin') {
+    $env:Path += ";${env:SystemDrive}\Go\bin"
+    [Environment]::SetEnvironmentVariable( "Path", $env:Path, [System.EnvironmentVariableTarget]::Machine )
+}
 
 "Installing Ruby..."
 Invoke-WebRequest "http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-1.9.3-p484.exe?direct" -OutFile ~/Downloads/rubyinstaller-1.9.3-p484.exe
