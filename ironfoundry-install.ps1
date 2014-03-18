@@ -178,6 +178,11 @@ function DEAInstallAction($context)
 
         Set-Location $context['deaAppPath']
         . bundle install --quiet
+
+
+        $curlRoot = resolve-path (join-path $context['SourceDir'] '\tools\curl')
+        Write-Host "Retriving and installing patron gem"
+        . gem install patron -v '0.4.18' --platform=x86-mingw32 -- -- --with-curl-lib="$curlRoot\bin" --with-curl-include="$curlRoot\include"
     }
 }
 
