@@ -5,7 +5,6 @@
 [submodule "dea_ng"]
 	path = dea_ng
 	url = https://github.com/IronFoundry/dea_ng.git
-	branch = dea_156
 [submodule "if_warden"]
 	path = if_warden
 	url = https://github.com/cloudfoundry-incubator/if_warden.git
