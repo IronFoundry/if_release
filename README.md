@@ -12,7 +12,7 @@ Ironfoundry Release
 ### To install a IronFoundry Warden/DEA release package on a Windows server:
 * Execute the ironfoundry_cfmaster.exe self-extracting archive on the server.
 * Run install-prerequisites.ps1 to install the Ironfoundry prerequisites, then restart the console to pick up the new environment variables.
-* Obtain a dea.yml config file, either by copying one from your existing CloudFoundry environment or by running generate-dea-config.ps1.
+* Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server.
 * Run ironfoundry-install.ps1, specifying the path to the dea.yml file, to install the Windows DEA and Warden.
 
 ### To register the CLR stack with the Cloud Controller:
