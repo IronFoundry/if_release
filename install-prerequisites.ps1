@@ -1,7 +1,8 @@
 $ProgressPreference = "SilentlyContinue"
 
 "Installing Hostable Web Core . . ."
-pkgmgr "/iu:IIS-WebServerRole;IIS-HostableWebCore;IIS-ISAPIExtensions;IIS-ISAPIFilter;IIS-NetFxExtensibility45;IIS-ASPNET45;NetFx4Extended-ASPNET45;" | out-null
+Dism /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-HostableWebCore /featurename:IIS-WebSockets
+Dism /online /enable-feature /all /featurename:Application-Server /featurename:Application-Server-WebServer-Support
 
 "Installing Go..."
 Invoke-Webrequest "http://go.googlecode.com/files/go1.2.windows-amd64.msi" -OutFile ~/Downloads/go1.2.windows-amd64.msi
