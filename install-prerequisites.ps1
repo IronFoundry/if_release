@@ -1,8 +1,8 @@
 $ProgressPreference = "SilentlyContinue"
 
 "Installing Hostable Web Core . . ."
-Dism /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-HostableWebCore /featurename:IIS-WebSockets
-Dism /online /enable-feature /all /featurename:Application-Server /featurename:Application-Server-WebServer-Support
+Dism /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-HostableWebCore /featurename:IIS-WebSockets /featurename:IIS-ASPNET /featurename:IIS-NetFxExtensibility
+Dism /online /enable-feature /all /featurename:Application-Server /featurename:Application-Server-WebServer-Support /featurename:AS-NET-Framework
 
 "Installing Go..."
 Invoke-Webrequest "http://go.googlecode.com/files/go1.2.windows-amd64.msi" -OutFile ~/Downloads/go1.2.windows-amd64.msi
