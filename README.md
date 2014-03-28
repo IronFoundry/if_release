@@ -6,11 +6,11 @@ Ironfoundry Release
   * Git
   * Go
 * Start a Powershell console with elevated privileges (required for some Warden tests).
-* Run .\ironfoundry_build.bat to build the release package.
-* The resulting release package is at ./release/ironfoundry_cfmaster.exe.
+* Run .\build.ps1 to build the release package.
+* The resulting release package is at ./release/ironfoundry_master.exe.
 
 ### To install a IronFoundry Warden/DEA release package on a Windows server:
-* Execute the ironfoundry_cfmaster.exe self-extracting archive on the server.
+* Execute the ironfoundry_master.exe self-extracting archive on the server.
 * Run install-prerequisites.ps1 to install the Ironfoundry prerequisites, then restart the console to pick up the new environment variables.
 * Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server.
 * Run ironfoundry-install.ps1, specifying the path to the dea.yml file, to install the Windows DEA and Warden.

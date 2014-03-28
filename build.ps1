@@ -6,7 +6,7 @@
 #
 # Build Source and Update Submodules
 #
-$ReleaseName='cfmaster'
+$ReleaseName='master'
 $IFSourceDirectory = Convert-Path $PWD
 $StagingRootDir = "$IFSourceDirectory\staging"
 $StagingDir = "$StagingRootDir\$ReleaseName"
@@ -57,9 +57,6 @@ Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$if_warden_version\binari
 Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
 
 $additionalFiles = @( 
-    'default-dea-config.yml',
-	'generate-dea-config.ps1',
-	'generate-dea-config.rb',
     'ironfoundry-install.ps1', 
     'start-if-services.ps1', 
     'stop-if-services.ps1',
