@@ -32,7 +32,7 @@ Param(
 
 # General install information
 $installContext = @{}
-$Release = 'cfmaster'
+$Release = 'master'
 
 #
 # Helper routines
