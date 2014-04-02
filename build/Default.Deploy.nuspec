@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>0.0.0</version>
+    <authors>Tier3</authors>
+    <owners>Tier3</owners>
+    <description>$id$ Deployment Package</description>
+    <copyright>Copyright 2014 Tier3, Inc.</copyright>
+  </metadata>
+</package>
