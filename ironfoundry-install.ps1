@@ -196,8 +196,8 @@ function DEAServiceInstall($context)
     if ($context['action'] -eq 'install') {
         $rubywExe = "$($context['rubyPath'])\rubyw.exe"
           
-        . sc.exe create IFDeaSvc start=delayed-auto binPath="$rubywExe -C $($context['deaApppath'])\bin dea_winsvc.rb $($context['configFile'])" DisplayName= "Iron Foundry DEA"
-        . sc.exe failure IFDeaSvc reset=86400 actions="restart/600000/restart/600000/restart/600000"
+        . sc.exe create IFDeaSvc start=delayed-auto binPath="$rubywExe -C $($context['deaApppath'])\bin dea_winsvc.rb $($context['configFile'])" DisplayName= "Iron Foundry DEA" depend= "IFDeaDirSvc/ironfoundry.warden"
+        . sc.exe failure IFDeaSvc reset=86400 actions="restart/60000/restart/60000/restart/60000"
 
         AddFirewallRules $rubywExe "rubyw-193"
     }  
@@ -267,9 +267,9 @@ CopySourceDirectoryAction $installContext
 DEAInstallAction $installContext
 RebuildEventMachineAction $installContext
 UpdateConfigFile $installContext
-DEAServiceInstall $installContext 
 GoServiceInstall $installContext
 WardenServiceInstall $installContext
+DEAServiceInstall $installContext
 
 Set-Location $StartDirectory
     
