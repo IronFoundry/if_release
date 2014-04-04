@@ -1,8 +1,7 @@
 param(
-    $BuildType = 'dev',
     $NuGetPackageUrl = '',
-    $NuGetApikey = '',
-    $ReleaseVersion = '0.0.0'
+    $NuGetApiKey = '',
+    $ReleaseVersion = '0.0.0'  
     )
 #Assumes
 #  git in path
@@ -92,21 +91,32 @@ function ZipRelease()
     . $ZipCmd a -sfx "$ReleaseDir\ironfoundry-$ReleaseVersion.exe" -r -y $StagingRootDir\* | Out-Null
 }
 
-
 function Package()
 {
     Write-Host "Creating nuspec packages"
     . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.data" -BasePath "$StagingIFDataRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
     . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.dea_ng" -BasePath "$StagingDeaPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
-    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.warden" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.warden.service" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
 }
 
-#UpdateSubmodules
-#BuildWarden
-#BuildDirectoryServer
+function NuGetPush {
+    Write-Host "Pushing to nuget url: $NuGetPackageUrl"
+
+    Get-ChildItem "$ReleaseDir\*.$ReleaseVersion.nupkg" | ForEach-Object {
+        . $NuGetExe push -Source $NuGetPackageUrl -ApiKey "$NuGetApiKey" "$($_.FullName)"
+    }
+}
+
+UpdateSubmodules
+BuildWarden
+BuildDirectoryServer
 StageRelease
 CleanRelease
 ZipRelease
-Package
+if ($NuGetPackageUrl -ne '')
+{
+    Package
+    NuGetPush
+}
 
 Set-Location $IFSourceDirectory
