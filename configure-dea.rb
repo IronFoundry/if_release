@@ -4,7 +4,7 @@ require 'pathname'
 dea_yml_file = ARGV[0]
 ruby_path = Pathname.new(ARGV[1])
 ironfoundry_path = Pathname.new(ARGV[2])
-output_file = ironfoundry_path + 'dea_ng/app/config/dea.yml'
+output_file = ironfoundry_path + 'dea_ng/config/dea.yml'
 
 File.open(dea_yml_file, 'r') do |file|
     config = YAML.load(file)

@@ -22,7 +22,7 @@ $NuGetNuSpec = "$BuildRootDir\Default.Deploy.nuspec"
 # Staging Properties
 $StagingRootDir = "$IFSourceDirectory\staging"
 $StagingDir = "$StagingRootDir\$ReleaseVersion"
-$StagingIFDataRoot = "$StagingDir\IronFoundry"
+$StagingIFDataRoot = "$StagingDir\if_data"
 $StagingDeaPackageRoot = "$StagingDir\dea_ng"
 $StagingWardenPackageRoot = "$StagingDir\warden"
 
@@ -59,24 +59,9 @@ function StageRelease()
     Remove-Item $StagingRootDir -force -recurse -erroraction silentlycontinue | Out-Null
     New-Item $StagingDir -itemtype directory -Force | Out-Null
 
-    $dirs = @(
-        'buildpack_cache', 
-        'dea_ng\config',
-        'dea_ng\crashes',     
-        'dea_ng\db', 
-        'dea_ng\droplets',     
-        'dea_ng\instances', 
-        'dea_ng\staging', 
-        'dea_ng\tmp', 
-        'log',
-        'package_cache',
-        'run',
-        'warden\containers')
-
-    ForEach ($dir in $dirs)
-    {
-        New-Item $StagingIFDataRoot\$dir -itemtype directory -force | Out-Null 
-    }
+    Copy-Item -Recurse $IFSourceDirectory\if_data $StagingIFDataRoot -Container -Force
+    # NuGet pack cannot package empty directories, so add marker files.  Install.ps1 will remove these.
+    Get-ChildItem $StagingIFDataRoot -Recurse | Where-Object { $_.PSIsContainer } | ForEach-Object { "" > "$($_.FullName)\__marker.txt"}
 
     Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDeaPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$ReleaseVersion\binaries $StagingWardenPackageRoot -Container -Force
@@ -96,13 +81,14 @@ function StageRelease()
     }
 }
 
+function CleanRelease {
+    Remove-Item $ReleaseDir -recurse -force -erroraction silentlycontinue | Out-Null
+    New-Item $ReleaseDir -itemtype directory -force | Out-Null 
+}
+
 function ZipRelease()
 {
     Write-Host "Creating the release"
-
-    Remove-Item $ReleaseDir -recurse -force -erroraction silentlycontinue | Out-Null
-    New-Item $ReleaseDir -itemtype directory -force | Out-Null 
-
     . $ZipCmd a -sfx "$ReleaseDir\ironfoundry-$ReleaseVersion.exe" -r -y $StagingRootDir\* | Out-Null
 }
 
@@ -110,14 +96,16 @@ function ZipRelease()
 function Package()
 {
     Write-Host "Creating nuspec packages"
-
+    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.data" -BasePath "$StagingIFDataRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
     . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.dea_ng" -BasePath "$StagingDeaPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.warden" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
 }
 
-UpdateSubmodules
-BuildWarden
-BuildDirectoryServer
+#UpdateSubmodules
+#BuildWarden
+#BuildDirectoryServer
 StageRelease
+CleanRelease
 ZipRelease
 Package
 
