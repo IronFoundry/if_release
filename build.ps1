@@ -64,7 +64,7 @@ function StageRelease()
 
     Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDeaPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$ReleaseVersion\binaries $StagingWardenPackageRoot -Container -Force
-    Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
+    Copy-Item -Recurse $IFSourceDirectory\tools $StagingDeaPackageRoot\tools -Container -Force
 
     $additionalFiles = @( 
         'ironfoundry-install.ps1', 
