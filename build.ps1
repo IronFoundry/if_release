@@ -71,7 +71,6 @@ function StageRelease()
         'start-if-services.ps1', 
         'stop-if-services.ps1',
     	'install-prerequisites.ps1',
-    	'configure-dea.rb',
     	'README.md')
 
     ForEach($file in $additionalFiles)
