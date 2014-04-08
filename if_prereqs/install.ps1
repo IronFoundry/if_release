@@ -18,7 +18,7 @@ function FindApp($appName)
 Dism /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-HostableWebCore /featurename:IIS-WebSockets /featurename:IIS-ASPNET /featurename:IIS-NetFxExtensibility
 Dism /online /enable-feature /all /featurename:Application-Server /featurename:Application-Server-WebServer-Support /featurename:AS-NET-Framework
 
-if (FindApp "go.exe" -eq $null)
+if ( (FindApp "go.exe") -eq $null)
 {
     "Installing Go..."
     Invoke-Webrequest "http://go.googlecode.com/files/go1.2.windows-amd64.msi" -OutFile ~/Downloads/go1.2.windows-amd64.msi
@@ -34,7 +34,7 @@ else {
     Write-Host "Found go.exe."
 }
 
-if (FindApp "ruby.exe" -eq $null)
+if ( (FindApp "ruby.exe") -eq $null)
 {
     "Installing Ruby..."
     Invoke-WebRequest "http://dl.bintray.com/oneclick/rubyinstaller/rubyinstaller-1.9.3-p484.exe?direct" -OutFile ~/Downloads/rubyinstaller-1.9.3-p484.exe
@@ -59,7 +59,7 @@ else {
 C:\Ruby193\bin\gem.bat update --system --quiet | out-null
 C:\Ruby193\bin\gem.bat install bundle --quiet | out-null
 
-if (FindApp "git.exe" -eq $null)
+if ( (FindApp "git.exe") -eq $null)
 {
     "Installing msysgit for windows..."
     Invoke-WebRequest "https://msysgit.googlecode.com/files/Git-1.9.0-preview20140217.exe" -OutFile ~/Downloads/Git-1.9.0-preview20140217.exe
