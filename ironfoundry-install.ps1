@@ -7,7 +7,9 @@ Param(
     
     [string] $IF_WardenUser = "IFWardenService",
 
-    [string] $DefaultInstallDir = "C:\IronFoundry"
+    [string] $DefaultInstallDir = "C:\IronFoundry",
+
+    [string] $ReleaseVersion = '0.0.0'
     )
 
 
@@ -24,49 +26,27 @@ Param(
 #   Git
 #
 # In Package:
+#  if_data
+#  if_warden
 #  dea_ng source
-#  eventmachine source
-#  Precompiled IFWarden
 #  Curl
 #  7Zip
 
+$ErrorActionPreference = "Stop"
 # General install information
-$installContext = @{}
-$Release = 'master'
+$StartDirectory = resolve-path $PWD
+$ReleaseDir = join-path $StartDirectory $ReleaseVersion
+$InstallRootDir = $DefaultInstallDir
+
+
+# App locations
+$rubyApp = $null
+$rubyPath = $null
+
 
 #
 # Helper routines
 #
-function SetFullcontrolPermissions($folder, $user)
-{
-    $acl = Get-Acl $folder
-    $fcacl = New-Object  system.security.accesscontrol.filesystemaccessrule($user,"FullControl","Allow")
-    $acl.SetAccessRule($fcacl)
-    Set-Acl $folder $acl
-    Get-ChildItem $folder -Recurse | Set-Acl -AclObject $acl
-}
-
-function SetOwner($folder, $user)
-{
-    $acl = Get-Acl $folder
-    $objUser = New-Object System.Security.Principal.NTAccount($user)    
-    $acl.SetOwner($objUser)
-    Set-Acl $folder $acl  
-    Get-ChildItem $folder -Recurse | Set-Acl -AclObject $acl
-}
-
-function AddFirewallRules($exePath, $ruleName )
-{
-    . netsh.exe advfirewall firewall add rule name="$ruleName"-allow dir=in action=allow program="$exePath"
-    . netsh.exe advfirewall firewall add rule name="$ruleName"-out-allow dir=out action=allow program="$exePath"
-}
-
-function RemoveFirewallRules($ruleName)
-{
-     . netsh.exe advfirewall firewall delete rule name="$ruleName"-allow
-     . netsh.exe advfirewall firewall delete rule name="$ruleName"-allow-out
-}
-
 function IsAdmin()
 {
   $wid=[System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -115,161 +95,79 @@ function AddUserToGroup($userName, $groupName)
 #
 # Install and uninstall actions
 #
-function VerifyDependencies($context)
+function VerifyDependencies()
 {
     Write-Host "Verifying dependencies"    
 
-    $rubyApp = FindApp "rubyw.exe"
+    $success = $true
+
+    $script:rubyApp = (FindApp "ruby.exe")
+    $script:rubyPath = split-path $rubyApp
+
     if ($rubyApp -eq $null) {
-        Write-Error "Unable to find Ruby"
+        $success = $false
+        Write-Error "Unable to find ruby.exe"
     }
-    $context['rubyPath'] = Split-Path $rubyApp -Parent    
+
 
     if ((FindApp "go.exe") -eq $null) {
+        $success = $false
         Write-Error "Unable to find Go"
     }
 
     if ((FindApp "git.exe") -eq $null) {
+        $success = $false
         Write-Error "Unable to find git.exe"
     }    
+
+    return $success
 }
 
-function GoServiceInstall($context)
+function UpdateConfigFile($sourceConfig, $targetConfig)
 {
-    Write-Host "Install GO Directory Service"    
+    Write-Host "Updating configuration file into to $targetConfig"
 
-    $runnerExe = resolve-path "$($context['InstallRootDir'])\dea_ng\app\go\winrunner.exe"
-    . $runnerExe remove
-    
-    if ($context['action'] -eq 'install') {
-        Write-Host "Installing IF WinRunner Service"
-
-        . $runnerExe install $context['configFile']
-        AddFirewallRules $runnerExe "IF_runner"
-    }
-    else {
-        RemoveFirewallRules "IF_runner"
-    }
-}
-
-function CopySourceDirectoryAction($context)
-{
-    Write-Host "Copy files to target directory"
-
-    Copy-Item -Recurse -Force $context['SourceDir'] $context['InstallRootDir']
-
-    SetOwner $context['InstallRootDir'] "Administrators"
-    SetFullcontrolPermissions $context['InstallRootDir'] "NT Authority\Local Service"
-
-    $context['deaAppPath'] = "$($context['InstallRootDir'])\dea_ng\app"
-    $context['wardenAppPath'] = resolve-path "$($context['InstallRootDir'])\warden\app"
-    $context['configFile'] = resolve-path "$($context['deaAppPath'])\config\dea.yml"
-}
-
-function DEAInstallAction($context)
-{
-    Write-Host "Install DEA dependent gems (this may take a while)"
-
-    if ($context['action'] -eq 'install')
-    {
-        Write-Host "Update gem packages for dea_ng"
-        . gem update --system --quiet
-        . gem install bundle --quiet
-
-        Set-Location $context['deaAppPath']
-        . bundle install --quiet
-
-
-        $curlRoot = resolve-path (join-path $context['SourceDir'] '\tools\curl')
-        Write-Host "Retriving and installing patron gem"
-        . gem install patron -v '0.4.18' --platform=x86-mingw32 -- -- --with-curl-lib="$curlRoot\bin" --with-curl-include="$curlRoot\include"
-    }
-}
-
-function DEAServiceInstall($context)
-{
-    Write-Host "Install DEA service entry"
-
-    . sc.exe delete IFDeaSvc
-    RemoveFirewallRules "rubyw-193"
-
-    if ($context['action'] -eq 'install') {
-        $rubywExe = "$($context['rubyPath'])\rubyw.exe"
-          
-        . sc.exe create IFDeaSvc start=delayed-auto binPath="$rubywExe -C $($context['deaApppath'])\bin dea_winsvc.rb $($context['configFile'])" DisplayName= "Iron Foundry DEA" depend= "IFDeaDirSvc/ironfoundry.warden"
-        . sc.exe failure IFDeaSvc reset=86400 actions="restart/60000/restart/60000/restart/60000"
-
-        AddFirewallRules $rubywExe "rubyw-193"
-    }  
-}
-
-function RebuildEventMachineAction($context)
-{
-    Write-Host "Build and install custom event machine"
-    if ($context['action'] -eq 'install') {
-        Write-Host "Building and installing custom eventmachine gem"
-        Set-Location "$($context['InstallRootDir'])"
-        git clone https://github.com/IronFoundry/eventmachine.git eventmachine
-
-        Set-Location "$($context['InstallRootDir'])\eventmachine"
-        . gem uninstall eventmachine --force --version 1.0.3 --quiet
-        . gem build eventmachine.gemspec --quiet
-        . gem install eventmachine-1.0.3.gem --quiet
-    }
-}
-
-function WardenServiceInstall($context)
-{
-    Write-Host "Install warden service"
-    #
-    # Install Warden Service
-    #
-    $wardenService = "$($context['wardenAppPath'])\IronFoundry.Warden.Service.exe"
-    . $wardenService uninstall
-
-    if ($context['action'] -eq 'install')
-    {
-        CreateLocalUser $IF_WardenUser $IF_WardenUser_Password
-        AddUserToGroup $IF_WardenUser "Administrators"
-        
-        . $wardenService install -username:"$env:computername\$IF_WardenUser" -password:"$IF_WardenUser_Password" --autostart
-        if ($? -eq $false)
-        {
-            Write-Error "Unable to install warden service"
-        }
-    }
-    else {
-        RemoveLocaluser $IF_WardenUser
-    }
-}
-
-function UpdateConfigFile($context)
-{
 	Set-Location $StartDirectory
 	
-	$deaYmlFile = "$(resolve-path $Dea_Yml_File)" -Replace "\\", "/"
-	$rubyPath = "$($context['rubyPath'])" -Replace "\\", "/"
-	$installRoot = "$($context['InstallRootDir'])" -Replace "\\", "/"
-	& ruby $StartDirectory\configure-dea.rb "$deaYmlFile" "$rubyPath" "$installRoot"
+	$deaYmlFile = "$(resolve-path $sourceConfig)" -Replace "\\", "/"
+	$configRubyPath = $rubyPath -Replace "\\", "/"
+    $targetConfigRubyPath = $targetConfig -Replace "\\", "/"
+    
+	& $rubyApp "$ReleaseDir\if_data\configure-dea.rb" "$deaYmlFile" "$configRubyPath" $InstallRootDir "$targetConfigRubyPath"
+}
+
+function CreateLocalAdminUser($user, $password)
+{
+    Write-Host "Creating local user $user and adding to Administrators"
+    DeleteLocaluser $user
+    CreateLocalUser $user $password
+    AddUserToGroup $user "Administrators"
 }
 
 #
 # Unpack folder and set permissions
 #
-$StartDirectory = resolve-path $PWD
+if ( (IsAdmin) -eq $false)
+{
+    Write-Error "This script must be run as admin."
+    Exit 1
+}
 
-$installContext['action'] = 'install'
-$installContext['InstallRootDir'] = $DefaultInstallDir
-$installContext['SourceDir'] = "$PWD\$Release"
+if ( (VerifyDependencies) -eq $false)
+{
+    Write-Error "Failed to verify dependencies."
+    Exit 1
+}
 
-VerifyDependencies $installContext
-CopySourceDirectoryAction $installContext
-DEAInstallAction $installContext
-RebuildEventMachineAction $installContext
-UpdateConfigFile $installContext
-GoServiceInstall $installContext
-WardenServiceInstall $installContext
-DEAServiceInstall $installContext
+& $ReleaseDir\if_data\install.ps1 $InstallRootDir $Dea_Yml_File
+
+$configured_Dea_Yml_File = (join-path $InstallRootDir "dea_ng\config\dea.yml")
+UpdateConfigFile $Dea_Yml_File $configured_Dea_Yml_File
+
+& $ReleaseDir\dea_ng\install.ps1 $InstallRootDir
+
+CreateLocalAdminUser $IF_WardenUser $IF_WardenUser_Password
+& $ReleaseDir\if_warden\install.ps1 (join-path $ReleaseDir if_warden) $IF_WardenUser $IF_WardenUser_Password $InstallRootDir
 
 Set-Location $StartDirectory
     

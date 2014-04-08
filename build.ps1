@@ -23,7 +23,8 @@ $StagingRootDir = "$IFSourceDirectory\staging"
 $StagingDir = "$StagingRootDir\$ReleaseVersion"
 $StagingIFDataRoot = "$StagingDir\if_data"
 $StagingDeaPackageRoot = "$StagingDir\dea_ng"
-$StagingWardenPackageRoot = "$StagingDir\warden"
+$StagingWardenPackageRoot = "$StagingDir\if_warden"
+$StagingIFPreReqs = "$StagingDir\if_prereqs"
 
 $ReleaseDir = "$IFSourceDirectory\release"
 $ZipCmd = "$ToolsDir\7zip\7za.exe"
@@ -64,6 +65,7 @@ function StageRelease()
 
     Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDeaPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$ReleaseVersion\binaries $StagingWardenPackageRoot -Container -Force
+    Copy-Item -Recurse $IFSourceDirectory\if_prereqs $StagingIFPreReqs -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
 
     $additionalFiles = @( 
@@ -90,12 +92,13 @@ function ZipRelease()
     . $ZipCmd a -sfx "$ReleaseDir\ironfoundry-$ReleaseVersion.exe" -r -y $StagingRootDir\* | Out-Null
 }
 
-function Package()
+function CreateNuSpecs()
 {
     Write-Host "Creating nuspec packages"
-    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.data" -BasePath "$StagingIFDataRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
-    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.dea_ng" -BasePath "$StagingDeaPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
-    . $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.warden.service" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuspec" -Version $ReleaseVersion -Prop "Id=ironfoundry.pre-reqs" -BasePath "$StagingIFPreReqs" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.data" -BasePath "$StagingIFDataRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.dea_ng" -BasePath "$StagingDeaPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.warden.service" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
 }
 
 function NuGetPush {
@@ -114,7 +117,7 @@ CleanRelease
 ZipRelease
 if ($NuGetPackageUrl -ne '')
 {
-    Package
+    CreateNuSpecs
     NuGetPush
 }
 
