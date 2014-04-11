@@ -11,10 +11,10 @@ Ironfoundry Release
 *   This will create a release versioned at 0.0.0 by default.  If you want to specify 
 *   analternate release version you can specify use the -ReleaseVersion parameter of build to change this.
 *
-* The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your release verison is)
+* The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your chosen release verison is)
 
 ### To install a IronFoundry Warden/DEA release package on a Windows server:
-* Execute the ironfoundry_master.exe self-extracting archive on the server.
+* Execute the ironfoundry_0.0.0.exe self-extracting archive on the server.  This location will be the run-time location of the services.
 * Run `install-prerequisites.ps1` to install the Ironfoundry prerequisites.  If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
 * Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server.
 * Run ironfoundry-install.ps1, specifying the path to the dea.yml file and a password for IF Warden user account (IFWardenService by default):
