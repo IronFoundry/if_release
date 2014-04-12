@@ -7,6 +7,33 @@ param(
 #  git in path
 #
 
+# 
+# TeamCity variables that may be set
+# 
+
+$BuildVersion = $ReleaseVersion
+if ($env:BUILD_NUMBER -ne $null) {
+    $BuildVersion = $env:BUILD_NUMBER
+}
+
+$BuildBranch = 'DevLocal'
+if ($env:BUILD_BRANCH -ne $null) {
+    $BuildBranch = $env:BUILD_BRANCH
+
+    if ($BuildBranch -eq '<default>') {
+        $BuildBranch = 'master'
+    }
+}   
+
+$BuildIsPrivate = ($BuildBranch -ne 'master')
+
+if ($BuildIsPrivate -eq $true) {
+    $NuGetVersion = $BuildVersion + $BuildBranch
+}
+else {
+    $NuGetVersion = $BuildVersion
+}
+
 #
 # Base directories
 #
@@ -20,7 +47,7 @@ $NuGetNuSpec = "$BuildRootDir\Default.Deploy.nuspec"
 
 # Staging Properties
 $StagingRootDir = "$IFSourceDirectory\staging"
-$StagingDir = "$StagingRootDir\$ReleaseVersion"
+$StagingDir = "$StagingRootDir\$BuildVersion"
 $StagingIFDataRoot = "$StagingDir\if_data"
 $StagingDeaPackageRoot = "$StagingDir\dea_ng"
 $StagingWardenPackageRoot = "$StagingDir\if_warden"
@@ -28,7 +55,7 @@ $StagingIFPreReqs = "$StagingDir\if_prereqs"
 
 $ReleaseDir = "$IFSourceDirectory\release"
 $ZipCmd = "$ToolsDir\7zip\7za.exe"
-$LogFile = "$IFSourceDirectory\$ReleaseVersion-build.log"
+$LogFile = "$IFSourceDirectory\$BuildVersion-build.log"
 
 function UpdateSubmodules
 {
@@ -39,8 +66,8 @@ function UpdateSubmodules
 
 function BuildWarden()
 {
-    Write-Host "Building Warden"
-    .\if_warden\build.bat Default /verbosity:minimal /p:BuildVersion="$ReleaseVersion"
+    Write-Host "Building Warden: $BuildVersion"
+    .\if_warden\build.bat Default /verbosity:minimal /p:BuildNumber="$BuildVersion"
 }
 
 function BuildDirectoryServer()
@@ -64,7 +91,7 @@ function StageRelease()
     Get-ChildItem $StagingIFDataRoot -Recurse | Where-Object { $_.PSIsContainer } | ForEach-Object { "" > "$($_.FullName)\__marker.txt"}
 
     Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDeaPackageRoot -Container -Force
-    Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$ReleaseVersion\binaries $StagingWardenPackageRoot -Container -Force
+    Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$BuildVersion\binaries $StagingWardenPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_prereqs $StagingIFPreReqs -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
 
@@ -89,22 +116,23 @@ function CleanRelease {
 function ZipRelease()
 {
     Write-Host "Creating the release"
-    . $ZipCmd a -sfx "$ReleaseDir\ironfoundry-$ReleaseVersion.exe" -r -y $StagingRootDir\* | Out-Null
+
+    . $ZipCmd a -sfx "$ReleaseDir\ironfoundry-$BuildVersion-$BuildBranch.exe" -r -y $StagingRootDir\* | Out-Null
 }
 
 function CreateNuSpecs()
 {
     Write-Host "Creating nuspec packages"
-    & $NuGetExe pack "$NuGetNuspec" -Version $ReleaseVersion -Prop "Id=ironfoundry.pre-reqs" -BasePath "$StagingIFPreReqs" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
-    & $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.data" -BasePath "$StagingIFDataRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
-    & $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.dea_ng" -BasePath "$StagingDeaPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
-    & $NuGetExe pack "$NuGetNuSpec" -Version $ReleaseVersion -Prop "Id=ironfoundry.warden.service" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuspec" -Version $NuGetVersion -Prop "Id=ironfoundry.pre-reqs" -BasePath "$StagingIFPreReqs" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuSpec" -Version $NuGetVersion -Prop "Id=ironfoundry.data" -BasePath "$StagingIFDataRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuSpec" -Version $NuGetVersion -Prop "Id=ironfoundry.dea_ng" -BasePath "$StagingDeaPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
+    & $NuGetExe pack "$NuGetNuSpec" -Version $NuGetVersion -Prop "Id=ironfoundry.warden.service" -BasePath "$StagingWardenPackageRoot" -NoPackageAnalysis -NoDefaultExcludes -OutputDirectory "$ReleaseDir"
 }
 
 function NuGetPush {
     Write-Host "Pushing to nuget url: $NuGetPackageUrl"
 
-    Get-ChildItem "$ReleaseDir\*.$ReleaseVersion.nupkg" | ForEach-Object {
+    Get-ChildItem "$ReleaseDir\*.$NuGetVersion.nupkg" | ForEach-Object {
         . $NuGetExe push -Source $NuGetPackageUrl -ApiKey "$NuGetApiKey" "$($_.FullName)"
     }
 }
