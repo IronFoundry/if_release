@@ -32,7 +32,7 @@ if ($NuGetPackageUrl -eq '' -and $env:NUGET_PACKAGE_URL -ne $null) {
 }
 
 if ($NuGetApikey -eq '' -and $env:NUGET_API_KEY -ne $null) {
-    $NuGetApiKey = $env:NUGET_PACKAGE_URL
+    $NuGetApiKey = $env:NUGET_API_KEY
 }
 
 if ($BuildIsPrivate -eq $true) {
