@@ -36,7 +36,7 @@ if ($NuGetApikey -eq '' -and $env:NUGET_API_KEY -ne $null) {
 }
 
 if ($BuildIsPrivate -eq $true) {
-    $NuGetVersion = $BuildVersion + $BuildBranch
+    $NuGetVersion = "$BuildVersion-$BuildBranch"
 }
 else {
     $NuGetVersion = $BuildVersion
