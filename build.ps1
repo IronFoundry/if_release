@@ -95,9 +95,6 @@ function StageRelease()
     New-Item $StagingDir -itemtype directory -Force | Out-Null
 
     Copy-Item -Recurse $IFSourceDirectory\if_data $StagingIFDataRoot -Container -Force
-    # NuGet pack cannot package empty directories, so add marker files.  Install.ps1 will remove these.
-    Get-ChildItem $StagingIFDataRoot -Recurse | Where-Object { $_.PSIsContainer } | ForEach-Object { "" > "$($_.FullName)\__marker.txt"}
-
     Copy-Item -Recurse $IFSourceDirectory\dea_ng $StagingDeaPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$BuildVersion\binaries $StagingWardenPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_prereqs $StagingIFPreReqs -Container -Force
