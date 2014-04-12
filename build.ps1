@@ -27,6 +27,14 @@ if ($env:BUILD_BRANCH -ne $null) {
 
 $BuildIsPrivate = ($BuildBranch -ne 'master')
 
+if ($NuGetPackageUrl -eq '' -and $env:NUGET_PACKAGE_URL -ne $null) {
+    $NuGetPackageUrl = $env:NUGET_PACKAGE_URL
+}
+
+if ($NuGetApikey -eq '' -and $env:NUGET_API_KEY -ne $null) {
+    $NuGetApiKey = $env:NUGET_PACKAGE_URL
+}
+
 if ($BuildIsPrivate -eq $true) {
     $NuGetVersion = $BuildVersion + $BuildBranch
 }
