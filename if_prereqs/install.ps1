@@ -17,6 +17,7 @@ function FindApp($appName)
 "Installing Hostable Web Core . . ."
 Dism /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:IIS-HostableWebCore /featurename:IIS-WebSockets /featurename:IIS-ASPNET /featurename:IIS-NetFxExtensibility
 Dism /online /enable-feature /all /featurename:Application-Server /featurename:Application-Server-WebServer-Support /featurename:AS-NET-Framework
+Dism /online /enable-feature /all /featurename:IIS-HttpErrors /featurename:IIS-RequestMonitor /featurename:IIS-HttpTracing
 
 if ( (FindApp "go.exe") -eq $null)
 {
