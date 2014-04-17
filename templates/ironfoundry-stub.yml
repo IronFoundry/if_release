@@ -1,0 +1,7 @@
+properties:
+  cc:
+    stacks:
+    - name: "lucid64"
+      description: "Ubuntu 10.04"
+    - name: "windows2012"
+      description: "Windows Server 2012 (64-bit)"
