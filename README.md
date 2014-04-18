@@ -33,7 +33,7 @@ Ironfoundry Release
       stacks:
         - name: "lucid64"
           description: "Ubuntu 10.04"    
-        - name: "mswin-clr"
+        - name: "windows2012"
           description: "Microsoft Windows / .Net 64 bit"
   ```
   * Redeploy the BOSH deployment.
@@ -41,10 +41,10 @@ Ironfoundry Release
   * SSH to your cloud controller server.
   * Edit /var/vcap/jobs/cloud_controller_ng/stacks.yml and add these two lines:
   ```
-  - name: mswin-clr
+  - name: windows2012
     description: Microsoft .NET / Windows 64-bit
   ```
   * Restart the cloud controller.
 
 ### To push a Windows application:
-* `cf push myapp -s mswin-clr`
+* `cf push myapp -s windows2012`

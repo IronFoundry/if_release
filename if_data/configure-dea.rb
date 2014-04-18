@@ -24,8 +24,8 @@ File.open(dea_yml_file, 'r') do |file|
     config['logging']['file'] = (ironfoundry_path + 'log/dea_ng.log').to_s.to_ruby_path
     config['logging'].delete('syslog')
     config['staging']['environment']['BUILDPACK_CACHE'] = (ironfoundry_path + 'buildpack_cache').to_s.to_ruby_path
-    config['bind_mounts'] =[ 'src_path' => (ironfoundry_path + 'buildpack_cache').to_s.to_ruby_path ]
-    config['stacks'] = ['mswin-clr']
+    config['bind_mounts'] =[ 'src_path' => (ironfoundry_path + 'buildpack_cache').to_s ]
+    config['stacks'] = ['windows2012']
 
     File.open(output_file, 'w') do |file|
         file.write(YAML.dump(config))
