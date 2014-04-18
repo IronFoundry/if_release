@@ -26,6 +26,7 @@ File.open(dea_yml_file, 'r') do |file|
     config['staging']['environment']['BUILDPACK_CACHE'] = (ironfoundry_path + 'buildpack_cache').to_s.to_ruby_path
     config['bind_mounts'] =[ 'src_path' => (ironfoundry_path + 'buildpack_cache').to_s ]
     config['stacks'] = ['windows2012']
+    config['instance']['cpu_limit_shares'] = 256 # this was needed for v161
 
     File.open(output_file, 'w') do |file|
         file.write(YAML.dump(config))
