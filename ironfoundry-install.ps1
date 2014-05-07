@@ -9,7 +9,10 @@ Param(
 
     [string] $DefaultInstallDir = "C:\IronFoundry",
 
-    [string] $ReleaseVersion = '0.0.0'
+    [string] $ReleaseVersion = '0.0.0',
+
+    [int] $DEAMemoryMB = -1,
+    [int] $DEADiskMB = -1
     )
 
 
@@ -132,8 +135,23 @@ function UpdateConfigFile($sourceConfig, $targetConfig)
 	$deaYmlFile = "$(resolve-path $sourceConfig)" -Replace "\\", "/"
 	$configRubyPath = $rubyPath -Replace "\\", "/"
     $targetConfigRubyPath = $targetConfig -Replace "\\", "/"
+
+    $configureArgs = @(
+        '--source-config', $deaYmlFile,
+        '--ruby-path', $configRubyPath,
+        '--ironfoundry-path', $InstallRootDir,
+        '--output', $targetConfigRubyPath
+    )
+
+    if ($DEAMemoryMB -gt 0) {
+        $configureArgs += '--memory-mb', $DEAMemoryMB
+    }
+
+    if ($DEADiskMB -gt 0) {
+        $configureArgs += '--disk-mb', $DEADiskMB
+    }
     
-	& $rubyApp "$ReleaseDir\if_data\configure-dea.rb" "$deaYmlFile" "$configRubyPath" $InstallRootDir "$targetConfigRubyPath"
+	& $rubyApp "$ReleaseDir\if_data\configure-dea.rb" @configureArgs
 }
 
 function CreateLocalAdminUser($user, $password)
