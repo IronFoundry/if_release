@@ -41,8 +41,8 @@ $configureArgs = @(
     '--output', $IFDeaConfigFile
 )
 
-if ($IFDEADiskMB -gt 0) {
-    $configureArgs += '--memory-mb', $IFDEADiskMB
+if ($IFDEADMemoryMB -gt 0) {
+    $configureArgs += '--memory-mb', $IFDEADMemoryMB
 }
 
 if ($IFDEADiskMB -gt 0) {
