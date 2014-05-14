@@ -85,7 +85,14 @@ function CreateLocalUser([string]$userName, [string]$password)
 function DeleteLocaluser($userName)
 {
     $computer = [ADSI]"WinNT://$env:computername"
-    $computer.Delete("User", $userName)
+    Try
+	{
+		$computer.Delete("User", $userName)
+	}
+	Catch
+	{
+		Write-Host "Unable to delete user $userName. This is normal on first install since the user does not exist yet."
+	}
 }
 
 function AddUserToGroup($userName, $groupName)
