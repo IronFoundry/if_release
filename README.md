@@ -24,6 +24,7 @@ Ironfoundry Release
  * This will create a directory at C:\IronFoundry warden for logs and other information needed by the Windows DEA and Warden.  The supplied dea file will be modified a copied to the c:\IronFoundry\dea_ng\config folder.
   * If you have a release version other than the default 0.0.0 you will need to specify the -ReleaseVersion option for the install.
   * Note: This install can take a while to run as it must install a number of gem's required by the Windows DEA.
+* Run `start-if-services.ps1` to start the Iron Foundry services.
 
 ### To register the CLR stack with the Cloud Controller:
 * If your CloudFoundry environment was set up with BOSH:
