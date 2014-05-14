@@ -3,20 +3,21 @@ Ironfoundry Release
 ==========
 
 ### To build an IronFoundry Warden/DEA release package on a dev machine:
+* Make sure the machine is configured as a developer machine with Visual Studio 2013.
 * Ensure all prerequisites are installed:
   * Git
   * Go
 * Start a Powershell console with elevated privileges (required to run the entire set of Warden tests).
 * Run .\build.ps1 to build the release package.  
 *   This will create a release versioned at 0.0.0 by default.  If you want to specify 
-*   analternate release version you can specify use the -ReleaseVersion parameter of build to change this.
+*   an alternate release version you can specify use the -ReleaseVersion parameter of build to change this.
 *
-* The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your chosen release verison is)
+* The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your chosen release version is)
 
 ### To install a IronFoundry Warden/DEA release package on a Windows server:
 * Execute the ironfoundry_0.0.0.exe self-extracting archive on the server.  This location will be the run-time location of the services.
 * Run `install-prerequisites.ps1` to install the Ironfoundry prerequisites.  If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
-* Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server.
+* Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server. You can find the dea.yml file at /var/vcap/jobs/dea_next/config on the Linux DEA.
 * Run ironfoundry-install.ps1, specifying the path to the dea.yml file and a password for IF Warden user account (IFWardenService by default):
 `ironfoundry-install.ps1 c:\temp\dea.yml <SomePassword>`
 * Note:
