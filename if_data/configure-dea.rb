@@ -54,7 +54,7 @@ options = parse_args(ARGV)
 dea_yml_file = options[:source_config]
 ruby_path = options[:ruby_path]
 ironfoundry_path = options[:ironfoundry_path]
-output_file = options[:output_path] || ironfoundry_path.join('dea_ng/app/config/dea.yml').expand_path
+output_file = options[:output_path] || ironfoundry_path.join('dea_ng/config/dea.yml').expand_path
 
 File.open(dea_yml_file, 'r') do |file|
     config = YAML.load(file)
@@ -88,12 +88,6 @@ File.open(dea_yml_file, 'r') do |file|
     if options.has_key?(:disk_overcommit_factor)
         config['resources']['disk_overcommit_factor'] = options[:disk_overcommit_factor]
     end
-
-    # The Windows DEA is based on v161, so we need to modify the newer config files to match the older schema
-    config['instance'].delete('memory_to_cpu_share_ratio')
-    config['instance'].delete('min_cpu_share_limit')
-    config['instance'].delete('max_cpu_share_limit')
-    config['instance']['cpu_limit_shares'] = 256
 
     File.open(output_file, 'w') do |file|
         file.write(YAML.dump(config))
