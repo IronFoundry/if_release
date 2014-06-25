@@ -1,0 +1,11 @@
+---
+properties:
+  lifecycle_bundles:
+    lucid64: linux-circus/linux-circus.tgz
+    # Update this to the actual download location for windows-circus (i.e. blobstore, build-server, etc.)
+    windows2012: http://192.168.50.128.xip.io/windows-circus.tgz
+
+  app-manager:
+    lifecycle_bundles: (( properties.lifecycle_bundles ))
+  stager:
+    lifecycle_bundles: (( properties.lifecycle_bundles ))
