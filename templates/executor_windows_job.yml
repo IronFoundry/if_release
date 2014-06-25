@@ -1,0 +1,28 @@
+---
+jobs:
+- instances: 1
+  name: executor_windows_z1
+  networks:
+  - name: diego1
+  properties:
+    loggregator_endpoint:
+      host: 10.244.0.10
+      shared_secret: loggregator-secret
+    network_name: diego1
+    executor:
+      warden:
+        address: 192.168.50.128:9876
+        network: tcp
+    rep:
+      stack: windows2012
+  release: diego
+  resource_pool: large_z1
+  templates:
+  - name: executor
+    release: diego
+  - name: converger
+    release: diego
+  - name: rep
+    release: diego
+  - name: auctioneer
+    release: diego
