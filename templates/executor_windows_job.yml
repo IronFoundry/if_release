@@ -5,12 +5,12 @@ jobs:
   networks:
   - name: diego1
   properties:
-    loggregator_endpoint:
-      host: 10.244.0.10
-      shared_secret: loggregator-secret
+    loggregator_endpoint: (( external_services.loggregator_endpoint.z1 ))
     network_name: diego1
     executor:
       warden:
+        
+        # edit this
         address: 192.168.50.128:9876
         network: tcp
     rep:
