@@ -15,6 +15,7 @@ Ironfoundry Release
 * The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your chosen release version is)
 
 ### To install a IronFoundry Warden/DEA release package on a Windows server:
+* On a separate VM, install a new copy of Windows Server 2012.
 * Execute the ironfoundry_0.0.0.exe self-extracting archive on the server.  This location will be the run-time location of the services.
 * Run `install-prerequisites.ps1` to install the Ironfoundry prerequisites.  If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
 * Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server. You can find the dea.yml file at /var/vcap/jobs/dea_next/config on the Linux DEA.
