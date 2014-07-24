@@ -19,6 +19,10 @@ Ironfoundry Release
 * Execute the ironfoundry_0.0.0.exe self-extracting archive on the server.  This location will be the run-time location of the services.
 * Run `install-prerequisites.ps1` to install the Ironfoundry prerequisites.  If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
 * Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server. You can find the dea.yml file at /var/vcap/jobs/dea_next/config on the Linux DEA.
+* Set the primary DNS entry for windows to be the IP address of the
+  microbosh server. You can obtain the IP address of your microbosh
+  server by running `bosh target` from a linux or Mac workstation with bosh installed and access to
+  the microbosh server or by asking your Cloud Foundry administrator.
 * Run ironfoundry-install.ps1, specifying the path to the dea.yml file and a password for IF Warden user account (IFWardenService by default):
 `ironfoundry-install.ps1 c:\temp\dea.yml <SomePassword>`
 * Note:
