@@ -33,10 +33,16 @@ Ironfoundry Release
 
 ### To register the CLR stack with the Cloud Controller:
 * If your CloudFoundry environment was set up with BOSH:
-  * Add this section to your BOSH manifest:
+  * Add these sections to your BOSH manifest (note that these are two separate sections under properties and both need to be updated):
   ```
   properties:
     ccng:
+      stacks:
+        - name: "lucid64"
+          description: "Ubuntu 10.04"    
+        - name: "windows2012"
+          description: "Microsoft Windows / .Net 64 bit"
+    cc:
       stacks:
         - name: "lucid64"
           description: "Ubuntu 10.04"    
