@@ -80,6 +80,11 @@ function CreateLocalUser([string]$userName, [string]$password)
     $objUser = $computer.Create("user", $userName)
     $objUser.SetPassword($password)
     $objUser.SetInfo()
+
+    # Set password not to expire
+    $ADS_UF_DONT_EXPIRE_PASSWD = 0x10000
+    $objUser.UserFlags = $objUser.UserFlags[0] -bor $ADS_UF_DONT_EXPIRE_PASSWD
+    $objUser.SetInfo()
 }
 
 function DeleteLocaluser($userName)
