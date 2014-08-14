@@ -31,6 +31,15 @@ Ironfoundry Release
   * Note: This install can take a while to run as it must install a number of gem's required by the Windows DEA.
 * Run `start-if-services.ps1` to start the Iron Foundry services.
 
+### NOTE - Avoid password expirations for ironfoundry services
+To prevent the IFWarden user's password from expiring, we disable
+password expiration for that user during the install process. If this
+conflicts with an existing password policy or if you choose to
+re-enable the password expiration policy, then it becomes your
+responsibility to make sure that the IFWarden password is always
+valid. If the password does expire, the Iron Foundry services will be
+unable to restart if needed.
+
 ### To register the CLR stack with the Cloud Controller:
 * If your CloudFoundry environment was set up with BOSH:
   * Add these sections to your BOSH manifest (note that these are two separate sections under properties and both need to be updated):
