@@ -5,8 +5,8 @@ Ironfoundry Release
 ### To build an IronFoundry Warden/DEA release package on a dev machine:
 * Make sure the machine is configured as a developer machine with Visual Studio 2013.
 * Ensure all prerequisites are installed:
-  * Git
-  * Go
+  * [Git](http://git-scm.com/)
+  * [Go](http://golang.org/)
 * Start a Powershell console with elevated privileges (required to run the entire set of Warden tests).
 * Run .\build.ps1 to build the release package.  
 *   This will create a release versioned at 0.0.0 by default.  If you want to specify 
