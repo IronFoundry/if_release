@@ -68,5 +68,9 @@ unable to restart if needed.
   ```
   * Restart the cloud controller.
 
+### Installing the CLR buildpack
+* All buildpacks are now unbundled with releases of Cloud Foundry, so you need to manually upload the buildpack as the final step of the install. Use this command, `cf create-buildpack clr_buildpack https://github.com/cloudfoundry-incubator/cloudfoundry-buildpack-clr/archive/v1.zip 5` to install the buildpack into your Cloud Foundry instance. 
+* The final argument, `5`, can be changed to alter priority of the CLR buidpack in the chain of buidpacks that are executed during staging. Raising the number will cause the buildpack to be tried later in the chain, while lowering it will cause it be attempted earlier.
+
 ### To push a Windows application:
 * `cf push myapp -s windows2012`
