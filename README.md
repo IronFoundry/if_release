@@ -15,6 +15,8 @@ Iron Foundry Release
 
 ### To install a Iron Foundry Warden/DEA release package on a Windows server:
 
+#### Note: Avoid installing Iron Foundry with user that has a spaces in their username.
+
 -	On a separate VM, install a new copy of Windows Server 2012.
 -	Execute the ironfoundry_0.0.0.exe self-extracting archive on the server. This location will be the run-time location of the services. We recommend placing the self-extracting archive in a directory outside of the home directory such as C:\IF_Install.
 -	Run `install-prerequisites.ps1` to install the Iron Foundry prerequisites. If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
@@ -28,7 +30,7 @@ Iron Foundry Release
 	-	Note: This install can take a while to run as it must install a number of gem's required by the Windows DEA.
 -	Run `start-if-services.ps1` to start the Iron Foundry services.
 
-### NOTE - Avoid password expirations for Iron Foundry services
+#### NOTE - Avoid password expirations for Iron Foundry services
 
 To prevent the IFWarden user's password from expiring, we disable password expiration for that user during the install process. If this conflicts with an existing password policy or if you choose to re-enable the password expiration policy, then it becomes your responsibility to make sure that the IFWarden password is always valid. If the password does expire, the Iron Foundry services will be unable to restart if needed.
 
