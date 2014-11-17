@@ -1,7 +1,7 @@
-Ironfoundry Release
-===================
+Iron Foundry Release
+====================
 
-### To build an IronFoundry Warden/DEA release package on a dev machine:
+### To build an Iron Foundry Warden/DEA release package on a dev machine:
 
 -	Make sure the machine is configured as a developer machine with Visual Studio 2013.
 -	Ensure all prerequisites are installed:
@@ -13,11 +13,11 @@ Ironfoundry Release
 -	an alternate release version you can specify use the -ReleaseVersion parameter of build to change this.*
 -	The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your chosen release version is)
 
-### To install a IronFoundry Warden/DEA release package on a Windows server:
+### To install a Iron Foundry Warden/DEA release package on a Windows server:
 
 -	On a separate VM, install a new copy of Windows Server 2012.
 -	Execute the ironfoundry_0.0.0.exe self-extracting archive on the server. This location will be the run-time location of the services. We recommend placing the self-extracting archive in a directory outside of the home directory such as C:\IF_Install.
--	Run `install-prerequisites.ps1` to install the Ironfoundry prerequisites. If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
+-	Run `install-prerequisites.ps1` to install the Iron Foundry prerequisites. If you specified a release version, you will need to run install-prerequisites.ps1 with the specific version specified, then restart the console to pick up the new environment variables.
 -	Obtain a dea.yml config file for your CloudFoundry environment by copying it from an existing Linux DEA in your environment to the Windows server. You can find the dea.yml file at /var/vcap/jobs/dea_next/config on the Linux DEA.
 -	Set the primary DNS entry for windows to be the IP address of the microbosh server. Keep your existing DNS entries as additional lookup.
 	-	You can obtain the IP address of your microbosh server by running `bosh target` from a linux or Mac workstation with bosh installed and access to the microbosh server or by asking your Cloud Foundry administrator.
@@ -28,7 +28,7 @@ Ironfoundry Release
 	-	Note: This install can take a while to run as it must install a number of gem's required by the Windows DEA.
 -	Run `start-if-services.ps1` to start the Iron Foundry services.
 
-### NOTE - Avoid password expirations for ironfoundry services
+### NOTE - Avoid password expirations for Iron Foundry services
 
 To prevent the IFWarden user's password from expiring, we disable password expiration for that user during the install process. If this conflicts with an existing password policy or if you choose to re-enable the password expiration policy, then it becomes your responsibility to make sure that the IFWarden password is always valid. If the password does expire, the Iron Foundry services will be unable to restart if needed.
 
