@@ -40,9 +40,27 @@ If you don't already have BOSH CLI installed then install it via the following c
 $ gem install bosh_cli
 ```
 
+### Install Cloud Foundry CLI
+
+Follow the instructions on the [Cloud Foundry CLI](https://github.com/cloudfoundry/cli) README to install. To verify Cloud Foundry CLI is installed run the following command:
+
+```
+$ cf -v
+cf version 6.7.0-c38c991-2014-11-12T01:45:23+00:00
+```
+
 ### Install BOSH Lite and Cloud Foundry version 1.7.2 (For Dev environment)
 
-To run BOSH in your local dev environment, [BOSH Lite](https://github.com/cloudfoundry/bosh-lite) sets up a local BOSH server. Follow the installation steps on the README. When installing a Cloud Foundry environment do not use the "Single command deploy". Instead use the "Manual deploy" steps at https://github.com/cloudfoundry/bosh-lite/blob/master/docs/deploy-cf.md. When uploading a Cloud Foundry release run the following to install version 1.7.2 which is most compatible with Iron Foundry:
+To run BOSH in your local dev environment, [BOSH Lite](https://github.com/cloudfoundry/bosh-lite) sets up a local BOSH server. Follow the installation steps on the README. When installing a Cloud Foundry environment do not use the "Single command deploy". Instead use the "Manual deploy" steps at https://github.com/cloudfoundry/bosh-lite/blob/master/docs/deploy-cf.md.
+
+Install the Cloud Foundry version 1.7.2 release which is currently the most compatible with Iron Foundry. In order to install Cloud Foundry version 1.7.2 the appropriate stemcell must be installed. Run the following commands to install the stemcell:
+
+```
+$ bosh download public stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go_agent.tgz
+$ bosh upload stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go_agent.tgz
+```
+
+Now Cloud Foundry version 1.7.2 can be installed via BOSH CLI:
 
 ```
 $ bosh upload release releases/cf-172.yml
@@ -112,19 +130,17 @@ $ bosh target
 Current target is https://192.168.64.138:25555 (Bosh Lite Director)
 ```
 
-*NOTE: If you do not have admin access to the BOSH server, ask your BOSH administrator.*
+**NOTE**: *If you do not have admin access to the BOSH server, ask your BOSH administrator.*
 
--	Install Iron Foundry services onto Window Server along with creating a password for the IF Warden user account:
+-	Install Iron Foundry services onto Window Server along with creating a password for the IF Warden user account (NOTE: This install can take a while to run as it must install a number of gem's required by the Windows DEA):
 
 ```
 PS C:\IF_Install> .\ironfoundry-install.ps1 c:\temp\dea.yml <SomePassword>
 ```
 
-*NOTE 1: This will create a directory at C:\IronFoundry. Logs and other information will be created in this directory. The supplied DEA file will be modified and copied to the c:\IronFoundry\dea_ng\config folder.*
+This will create a directory at C:\IronFoundry. Logs and other information will be created in this directory. The supplied DEA file will be modified and copied to the c:\IronFoundry\dea_ng\config folder.
 
-*NOTE 2: If you have a release version other than the default 0.0.0 you will need to specify the -ReleaseVersion option for the install.*
-
-*NOTE 3: This install can take a while to run as it must install a number of gem's required by the Windows DEA.*
+**NOTE**: *If you have a release version other than the default 0.0.0 you will need to specify the -ReleaseVersion option for the install.*
 
 -	Start up the Iron Foundry services:
 
@@ -196,6 +212,8 @@ Now that Cloud Foundry is setup to accept .NET applications for deployment, conf
 ```
 $ cf push myapp -s windows2012
 ```
+
+The `-s` argument to the `cf` command is used to tell Cloud Foundry which stack to use. In this case it is telling Cloud Foundry to use the `windows2012` stack configured in the "Register CLR Stack with Cloud Foundry Cloud Controller" section above.
 
 Troubleshooting
 ---------------
