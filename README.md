@@ -60,7 +60,7 @@ $ bosh download public stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go
 $ bosh upload stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go_agent.tgz
 ```
 
-Now Cloud Foundry version 1.7.2 can be installed via BOSH CLI:
+Now Cloud Foundry version 1.7.2 can be installed via BOSH CLI (within [cf-release](https://github.com/cloudfoundry/cf-release/tree/master/releases)):
 
 ```
 $ bosh upload release releases/cf-172.yml
