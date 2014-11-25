@@ -16,20 +16,20 @@ There is also a troubleshooting section at the end of this README to help with i
 Install Pre-requisites
 ----------------------
 
-### Install Ruby version 1.9.3-545
+### Install Ruby version 1.9.3-547
 
 In order to install BOSH you will need Ruby installed. We recommend using [rbenv](https://github.com/sstephenson/rbenv). If using rbenv, run the following commands:
 
 ```bash
-$ rbenv install 1.9.3-p545
-$ rbenv global 1.9.3-p545
+$ rbenv install 1.9.3-p547
+$ rbenv global 1.9.3-p547
 ```
 
 Once Ruby has been installed check the version via the following command:
 
 ```bash
 $ ruby -v
-ruby 1.9.3p545 (2014-02-24 revision 45159) [x86_64-darwin13.4.0]
+ruby 1.9.3p547 (2014-05-14 revision 45962) [x86_64-darwin13.4.0]
 ```
 
 ### Install BOSH CLI
@@ -60,7 +60,7 @@ $ bosh download public stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go
 $ bosh upload stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go_agent.tgz
 ```
 
-Now Cloud Foundry version 1.7.2 can be installed via BOSH CLI:
+Now Cloud Foundry version 1.7.2 can be installed via BOSH CLI (within [cf-release](https://github.com/cloudfoundry/cf-release/tree/master/releases)):
 
 ```
 $ bosh upload release releases/cf-172.yml
