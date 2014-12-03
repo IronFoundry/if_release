@@ -53,17 +53,17 @@ cf version 6.7.0-c38c991-2014-11-12T01:45:23+00:00
 
 To run BOSH in your local dev environment, [BOSH Lite](https://github.com/cloudfoundry/bosh-lite) sets up a local BOSH server. Follow the installation steps on the README. When installing a Cloud Foundry environment do not use the "Single command deploy". Instead use the "Manual deploy" steps at https://github.com/cloudfoundry/bosh-lite/blob/master/docs/deploy-cf.md.
 
-Install the Cloud Foundry version 1.7.2 release which is currently the most compatible with Iron Foundry. In order to install Cloud Foundry version 1.7.2 the appropriate stemcell must be installed. Run the following commands to install the stemcell:
+Install the Cloud Foundry version 1.9.3 release which is currently the most compatible with Iron Foundry. In order to install Cloud Foundry version 1.9.3 the appropriate stemcell must be installed. Run the following commands to install the stemcell:
 
 ```
-$ bosh download public stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go_agent.tgz
-$ bosh upload stemcell bosh-stemcell-64-warden-boshlite-ubuntu-lucid-go_agent.tgz
+$ bosh download public stemcell bosh-stemcell-389-warden-boshlite-ubuntu-trusty-go_agent.tgz
+$ bosh upload stemcell bosh-stemcell-389-warden-boshlite-ubuntu-trusty-go_agent.tgz
 ```
 
-Now Cloud Foundry version 1.7.2 can be installed via BOSH CLI (within [cf-release](https://github.com/cloudfoundry/cf-release/tree/master/releases)):
+Now Cloud Foundry version 1.9.3 can be installed via BOSH CLI (within [cf-release](https://github.com/cloudfoundry/cf-release/tree/master/releases)):
 
 ```
-$ bosh upload release releases/cf-172.yml
+$ bosh upload release releases/cf-193.yml
 ```
 
 Build Release on Dev Machine
@@ -245,3 +245,6 @@ Status   Name               DisplayName
 ------   ----               -----------
 Running  ironfoundry.warden Iron Foundry Warden Service
 ```
+### cf push fails with: Server error, status code: 400, error code: 170001
+
+Especially on bosh-lite, the initial cf push might fail with this error.  This happens while the Iron Foundry dea agent downloads the buildpacks.  It should resolve itself once the buildpacks have been downloaded.
