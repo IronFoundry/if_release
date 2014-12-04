@@ -233,17 +233,17 @@ There could be many reasons for failed app deployment from not completing all th
 ```
 PS C:\IF_Install> Get-Service if*
 
-Status   Name               DisplayName
-------   ----               -----------
-Running  IFDeaDirSvc        Iron Foundry DEA Directory Service
-Running  IFDeaSvc           Iron Foundry DEA
+Status   Name                             DisplayName
+------   ----                             -----------
+Running  IronFoundry.Dea.Directory        Iron Foundry DEA Directory Service
+Running  IronFoundry.Dea                  Iron Foundry DEA
 
 
 PS C:\IF_Install> Get-Service iron*
 
 Status   Name               DisplayName
 ------   ----               -----------
-Running  ironfoundry.warden Iron Foundry Warden Service
+Running  IronFoundry.Warden Iron Foundry Warden Service
 ```
 ### cf push fails with: Server error, status code: 400, error code: 170001
 
