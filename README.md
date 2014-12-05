@@ -137,6 +137,7 @@ Current target is https://192.168.64.138:25555 (Bosh Lite Director)
 ```
 PS C:\IF_Install> .\ironfoundry-install.ps1 c:\temp\dea.yml <SomePassword>
 ```
+**NOTE**: *The names of the Iron Foundry services changed in commit ca791f2. If you are are running the install on a server running a previous version, you will have to manually cleanup the old services (IFDeaSvc and IFDeaDirSvc).*
 
 This will create a directory at C:\IronFoundry. Logs and other information will be created in this directory. The supplied DEA file will be modified and copied to the c:\IronFoundry\dea_ng\config folder.
 
@@ -147,6 +148,18 @@ This will create a directory at C:\IronFoundry. Logs and other information will 
 ```
 PS C:\IF_Install> .\start-if-services.ps1
 ```
+- Verify all the services are running:
+
+```
+PS C:\> get-service Iron*
+
+Status  Name                      DisplayName
+------  ----                      -----------
+Running IronFoundry.Dea           Iron Foundry DEA
+Running IronFoundry.Dea.Directory Iron Foundry DEA Directory Service
+Running ironfoundry.warden        Iron Foundry Warden Service
+```
+
 
 **IMPORTANT**: *Avoid password expirations for Iron Foundry services. To prevent the IFWarden user's password from expiring, we disable password expiration for that user during the install process. If this conflicts with an existing password policy or if you choose to re-enable the password expiration policy, then it becomes your responsibility to make sure that the IFWarden password is always valid. If the password does expire, the Iron Foundry services will be unable to restart if needed.*
 
@@ -210,10 +223,13 @@ The final argument, `5`, can be changed to alter priority of the CLR buidpack in
 Now that Cloud Foundry is setup to accept .NET applications for deployment, configure a .NET application for Cloud Foundry and push it into Cloud Foundry:
 
 ```
-$ cf push myapp -s windows2012
+$ cf push myapp -s windows2012 -c app.exe
 ```
 
+
 The `-s` argument to the `cf` command is used to tell Cloud Foundry which stack to use. In this case it is telling Cloud Foundry to use the `windows2012` stack configured in the "Register CLR Stack with Cloud Foundry Cloud Controller" section above.
+
+The `-c` argument to the `cf` command is used to specify the startup command. If -c is not used, the clr buildpack will assume the name is 'app.exe'.
 
 Troubleshooting
 ---------------
