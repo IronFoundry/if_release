@@ -49,7 +49,7 @@ $ cf -v
 cf version 6.7.0-c38c991-2014-11-12T01:45:23+00:00
 ```
 
-### Install BOSH Lite and Cloud Foundry version 1.7.2 (For Dev environment)
+### Install BOSH Lite and Cloud Foundry version 1.9.3 (For Dev environment)
 
 To run BOSH in your local dev environment, [BOSH Lite](https://github.com/cloudfoundry/bosh-lite) sets up a local BOSH server. Follow the installation steps on the README. When installing a Cloud Foundry environment do not use the "Single command deploy". Instead use the "Manual deploy" steps at https://github.com/cloudfoundry/bosh-lite/blob/master/docs/deploy-cf.md.
 
@@ -245,6 +245,7 @@ Status   Name               DisplayName
 ------   ----               -----------
 Running  IronFoundry.Warden Iron Foundry Warden Service
 ```
+
 ### cf push fails with: Server error, status code: 400, error code: 170001
 
-Especially on bosh-lite, the initial cf push might fail with this error.  This happens while the Iron Foundry dea agent downloads the buildpacks.  It should resolve itself once the buildpacks have been downloaded.
+Especially on bosh-lite, the initial cf push might fail with this error. This happens while the Iron Foundry dea agent downloads the buildpacks. It should resolve itself once the buildpacks have been downloaded.
