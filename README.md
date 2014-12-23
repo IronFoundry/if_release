@@ -115,7 +115,12 @@ The Iron Foundry release package is now ready to be installed on Windows Server 
 PS C:\> mkdir IF_Install
 ```
 
--	Execute the ironfoundry_0.0.0.exe self-extracting archive in the created installer directory from the step 1
+-	Execute the self-extracting release archive created on dev machine:
+
+```
+PS C:\> .\ironfoundry_0.0.0.exe
+```
+
 -	Install the Iron Foundry pre-requisites using the script install-prerequisites.ps1.
 
 ```
