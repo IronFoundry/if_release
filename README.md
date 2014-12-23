@@ -86,10 +86,21 @@ The build process need to access Git repositories and to compile Go code. Ensure
 
 On the configured dev machine follow these steps to create an Iron Foundry release executable to be installed on Windows Server 2012.
 
+- Clone this repository via Github command shell on Windows or using the Github for Windows UI to a directory of your choosing. We will use C:\projects\if_release as the location in this README so please replace this with your actual directory location.
 -	Start a Powershell console with elevated privileges (required to run the entire set of Warden tests).
--	Run .\build.ps1 to build the release package.  
--	This will create a release versioned at 0.0.0 by default. If you want to specify an alternate release version you can specify use the -ReleaseVersion parameter of build to change this.
--	The resulting release package is at ./release/ironfoundry_0.0.0.exe (or whatever your chosen release version is)
+-	Build the release package by running the following in the cloned if_release project directory:
+
+```
+PS C:\projects\if_release> .\build.ps1
+```
+
+**NOTE**: *This will create a release versioned at 0.0.0 by default. If you want to specify an alternate release version you can specify use the -ReleaseVersion parameter of build to change this.*
+
+-	The resulting release package is located in the "release" directory. Copy the release to a location that can be shared with the Windows Server that you want to deploy Iron Foundry onto:
+
+```
+PS C:\projects\if_release> cp .\release\ironfoundry_0.0.0.exe [share location]
+```
 
 Install Release on Windows Server 2012:
 ---------------------------------------
