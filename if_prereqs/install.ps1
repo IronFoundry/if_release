@@ -42,23 +42,31 @@ if ( (FindApp "ruby.exe") -eq $null)
     Unblock-File ~/Downloads/rubyinstaller-1.9.3-p484.exe
     ~/Downloads/rubyinstaller-1.9.3-p484.exe /verysilent lang=en /tasks=modpath | out-null
 
+    # Add ruby to the local path because this process doesn't have the updated system path yet
+    $env:Path += ";${env:SystemDrive}\Ruby193\bin"
+}
+else {
+    Write-Host "Found ruby.exe, not install ruby"
+}
+
+if ( !(Test-Path "${env:SystemDrive}\RubyDevKit"))
+{
     "Installing Ruby Devkit..."
     Invoke-WebRequest "http://github.com/downloads/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe" -OutFile ~/Downloads/DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe
     Unblock-File ~/Downloads/DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe
     ~/Downloads/DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe -o"C:\RubyDevKit" -y | out-null
-    C:\Ruby193\bin\ruby.exe C:\RubyDevKit\dk.rb init | out-null
-    C:\Ruby193\bin\ruby.exe C:\RubyDevKit\dk.rb install | out-null
+    & "${env:SystemDrive}\Ruby193\bin\ruby.exe" ${env:SystemDrive}\RubyDevKit\dk.rb init | out-null
+    & "${env:SystemDrive}\Ruby193\bin\ruby.exe" ${env:SystemDrive}\RubyDevKit\dk.rb install | out-null    
+}
+else
+{
+    Write-Host "Found ${env:SystemDrive}\RubyDevKit, not installing RubyDevKit."
+}
 
-    # Add ruby to the local path because this process doesn't have the updated system path yet
-    $env:Path += ";C:\Ruby193\bin"
-}
-else {
-    Write-Host "Found ruby.exe, not install ruby or devkit "
-}
 
 "Updating Ruby gems..."
-C:\Ruby193\bin\gem.bat update --system --quiet | out-null
-C:\Ruby193\bin\gem.bat install bundle --quiet | out-null
+& "${env:SystemDrive}\Ruby193\bin\gem.bat" update --system --quiet | out-null
+& "${env:SystemDrive}\Ruby193\bin\gem.bat" install bundle --quiet | out-null
 
 if ( (FindApp "git.exe") -eq $null)
 {
