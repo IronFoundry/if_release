@@ -277,7 +277,3 @@ Status   Name               DisplayName
 ------   ----               -----------
 Running  IronFoundry.Warden Iron Foundry Warden Service
 ```
-
-### cf push fails with: Server error, status code: 400, error code: 170001
-
-Especially on bosh-lite, the initial cf push might fail with this error. This happens while the Iron Foundry dea agent downloads the buildpacks. It should resolve itself once the buildpacks have been downloaded.
