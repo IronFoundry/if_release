@@ -77,15 +77,31 @@ function BuildWarden()
 {
     Write-Host "Building Warden: $BuildVersion"
     .\if_warden\build.bat Default /verbosity:minimal /p:BuildNumber="$BuildVersion"
+
+    if ($LASTEXITCODE -ne 0)
+    {
+      throw 'The warden build failed!'
+    }
 }
 
 function BuildDirectoryServer()
 {
     Write-Host "Building GO WinRunner"
-    Set-Location $IFSourceDirectory\dea_ng\go\
-    $env:GOPATH="$IFSourceDirectory\dea_ng\go"
-    go build winrunner
-    Set-Location $IFSourceDirectory
+    Push-Location $IFSourceDirectory\dea_ng\go\
+    try
+    {
+        $env:GOPATH="$IFSourceDirectory\dea_ng\go"
+        go build winrunner
+
+        if ($LASTEXITCODE -ne 0)
+        {
+          throw 'The build for the Directory Service failed!'
+        }
+    }
+    finally
+    {
+        Pop-Location
+    }
 }
 
 function StageRelease()
