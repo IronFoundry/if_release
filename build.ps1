@@ -58,7 +58,6 @@ $StagingRootDir = "$IFSourceDirectory\staging"
 $StagingDir = "$StagingRootDir\$BuildVersion"
 $StagingIFDataRoot = "$StagingDir\if_data"
 $StagingDeaPackageRoot = "$StagingDir\dea_ng"
-$StagingEventMachineRoot = "${StagingDeaPackageRoot}\eventmachine"
 $StagingWardenPackageRoot = "$StagingDir\if_warden"
 $StagingIFPreReqs = "$StagingDir\if_prereqs"
 
@@ -116,7 +115,6 @@ function StageRelease()
     Copy-Item -Recurse $IFSourceDirectory\if_warden\output\$BuildVersion\binaries $StagingWardenPackageRoot -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\if_prereqs $StagingIFPreReqs -Container -Force
     Copy-Item -Recurse $IFSourceDirectory\tools $StagingDir\tools -Container -Force
-    Copy-Item -Recurse $IFSourceDirectory\eventmachine $StagingEventMachineRoot
 
 
 
