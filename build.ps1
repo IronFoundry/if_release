@@ -1,7 +1,8 @@
 param(
     $NuGetPackageUrl = '',
     $NuGetApiKey = '',
-    $ReleaseVersion = '0.0.0'
+    $ReleaseVersion = '0.0.0',
+    [switch] $DisableXUnitParallelization = $false
     )
 #Assumes
 #  git in path
@@ -75,7 +76,9 @@ function UpdateSubmodules
 function BuildWarden()
 {
     Write-Host "Building Warden: $BuildVersion"
-    .\if_warden\build.bat Default /verbosity:minimal /p:BuildNumber="$BuildVersion"
+    $parallelizeXUnit = !$DisableXUnitParallelization;
+
+    .\if_warden\build.bat Default /verbosity:diag /p:BuildNumber="$BuildVersion" /p:XUnitParallelizeAssemblies="$parallelizeXUnit" /p:XUnitParallelizeTestCollections="$parallelizeXUnit"
 
     if ($LASTEXITCODE -ne 0)
     {
