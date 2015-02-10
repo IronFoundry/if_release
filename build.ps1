@@ -78,7 +78,7 @@ function BuildWarden()
     Write-Host "Building Warden: $BuildVersion"
     $parallelizeXUnit = !$DisableXUnitParallelization;
 
-    .\if_warden\build.bat Default /verbosity:diag /p:BuildNumber="$BuildVersion" /p:XUnitParallelizeAssemblies="$parallelizeXUnit" /p:XUnitParallelizeTestCollections="$parallelizeXUnit"
+    .\if_warden\build.bat Default /verbosity:minimal /p:BuildNumber="$BuildVersion" /p:XUnitParallelizeAssemblies="$parallelizeXUnit" /p:XUnitParallelizeTestCollections="$parallelizeXUnit"
 
     if ($LASTEXITCODE -ne 0)
     {
