@@ -19,12 +19,22 @@ Dism /online /enable-feature /all /featurename:IIS-WebServerRole /featurename:II
 Dism /online /enable-feature /all /featurename:Application-Server /featurename:Application-Server-WebServer-Support /featurename:AS-NET-Framework
 Dism /online /enable-feature /all /featurename:IIS-HttpErrors /featurename:IIS-RequestMonitor /featurename:IIS-HttpTracing
 
-if ( (FindApp "go.exe") -eq $null)
+$GoVersion = "1.4.1";
+$installedGo = get-wmiobject win32_product | where { $_.Name -match 'Go Programming Language' };
+if ($installedGo -and ($installedGo.Name -notlike "*go${GoVersion}*"))
 {
+   $installedGoName = $installedGo.Name;
+   write-host "Uninstalling installed Go version: ${installedGoName}" 
+   $installedGo.Uninstall() | out-null;
+}    
+
+if ((FindApp "go.exe") -eq $null)
+{
+    $goFileName = "go${GoVersion}.windows-amd64.msi"
     "Installing Go..."
-    Invoke-Webrequest "http://go.googlecode.com/files/go1.2.windows-amd64.msi" -OutFile ~/Downloads/go1.2.windows-amd64.msi
-    Unblock-File ~/Downloads/go1.2.windows-amd64.msi
-    ~/Downloads/go1.2.windows-amd64.msi /quiet
+    Invoke-Webrequest "https://storage.googleapis.com/golang/${GoFileName}" -OutFile "~/Downloads/${GoFileName}"
+    Unblock-File "~/Downloads/${GoFileName}"
+    & "~/Downloads/${GoFileName}" /quiet
     # Can't find a way to trigger the path addition for Go, so doing it manually.  Assuming standard install to system drive.
     if ($env:Path -notmatch '\\Go\\bin') {
         $env:Path += ";${env:SystemDrive}\Go\bin"
