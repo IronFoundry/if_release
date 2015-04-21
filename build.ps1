@@ -2,7 +2,8 @@ param(
     $NuGetPackageUrl = '',
     $NuGetApiKey = '',
     $ReleaseVersion = '0.0.0',
-    [switch] $DisableXUnitParallelization = $false
+    [switch] $DisableXUnitParallelization = $false,
+    [switch] $NoSync = $false
     )
 #Assumes
 #  git in path
@@ -68,6 +69,11 @@ $LogFile = "$IFSourceDirectory\$BuildVersion-build.log"
 
 function UpdateSubmodules
 {
+    if ($NoSync) {
+        Write-Host "NOT Updating submodules"
+        return
+    }
+
     Write-Host "Updating submodules"
     git submodule sync --recursive
     git submodule update --init --recursive
